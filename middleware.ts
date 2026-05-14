@@ -1,43 +1,31 @@
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
 
-import type { NextRequest } from "next/server";
+import authConfig from "@/auth.config";
 
-import { getToken } from "next-auth/jwt";
+const { auth } = NextAuth(authConfig);
 
-const adminPrefix = "/admin";
-const dealerPrefix = "/dealer";
+export default auth((req) => {
+  const isLoggedIn = !!req.auth;
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const isAdminRoute =
+    req.nextUrl.pathname.startsWith("/admin");
 
-  if (!pathname.startsWith(adminPrefix) && !pathname.startsWith(dealerPrefix)) {
-    return NextResponse.next();
-  }
-
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-  });
-
-  if (!token || typeof token.role !== "string") {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (pathname.startsWith(adminPrefix) && token.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  const isDealerRoute =
+    req.nextUrl.pathname.startsWith("/dealer");
 
   if (
-    pathname.startsWith(dealerPrefix) &&
-    token.role !== "DEALER" &&
-    token.role !== "ADMIN"
+    (isAdminRoute || isDealerRoute) &&
+    !isLoggedIn
   ) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return Response.redirect(
+      new URL("/login", req.nextUrl)
+    );
   }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/admin/:path*", "/dealer/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/dealer/:path*",
+  ],
 };
