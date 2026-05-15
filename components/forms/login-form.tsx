@@ -19,7 +19,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import { CustomInput } from "@/components/ui/shared/custom-input";
+import { CustomInput } from "@/components/shared/custom-input";
 
 export function LoginForm() {
   const router = useRouter();

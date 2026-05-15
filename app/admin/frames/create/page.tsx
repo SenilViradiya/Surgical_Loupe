@@ -6,7 +6,11 @@ import { Navbar } from "@/components/layouts/navbar";
 
 import { adminSidebarItems } from "@/constants/admin-sidebar";
 
-export default function AdminPage() {
+import { FrameForm } from "@/components/forms/frame-form";
+
+import { PageHeader } from "@/components/shared/page-header";
+
+export default function CreateFramePage() {
   return (
     <DashboardShell
       sidebar={
@@ -16,14 +20,15 @@ export default function AdminPage() {
       }
       navbar={<Navbar />}
     >
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold">
-          Admin Dashboard
-        </h1>
+      <div className="space-y-6">
+        <PageHeader
+          title="Create Frame"
+          description="Add new frame"
+        />
 
-        <p className="text-muted-foreground">
-          Welcome to admin panel.
-        </p>
+        <div className="rounded-xl border bg-white p-6">
+          <FrameForm />
+        </div>
       </div>
     </DashboardShell>
   );

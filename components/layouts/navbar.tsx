@@ -1,10 +1,21 @@
 "use client";
 
+import { useTransition } from "react";
+
 import { Button } from "@/components/ui/button";
 
 import { logoutUser } from "@/actions/auth/logout";
 
 export function Navbar() {
+  const [isPending, startTransition] =
+    useTransition();
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      await logoutUser();
+    });
+  };
+
   return (
     <header className="flex h-16 items-center justify-between border-b px-6">
       <h1 className="text-xl font-semibold">
@@ -13,9 +24,12 @@ export function Navbar() {
 
       <Button
         variant="destructive"
-        onClick={() => logoutUser()}
+        onClick={handleLogout}
+        disabled={isPending}
       >
-        Logout
+        {isPending
+          ? "Logging out..."
+          : "Logout"}
       </Button>
     </header>
   );

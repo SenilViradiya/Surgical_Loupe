@@ -1,6 +1,4 @@
-import { PrismaClient } from "../lib/generated/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma";
 
 async function main() {
   await prisma.frame.createMany({
@@ -19,6 +17,7 @@ async function main() {
         price: 1800,
       },
     ],
+    skipDuplicates: true,
   });
 
   await prisma.lens.createMany({
@@ -37,6 +36,7 @@ async function main() {
         price: 800,
       },
     ],
+    skipDuplicates: true,
   });
 
   console.log("Seeded successfully");
