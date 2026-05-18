@@ -1,15 +1,17 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import {frameSchema} from "@/lib/validations/frame";
 
-export async function createFrame(
-  values: z.input<typeof frameSchema>
+import { z } from "zod";
+
+import { lensSchema } from "@/lib/validations/lens";
+
+export async function createLens(
+  values: z.input<typeof lensSchema>
 ) {
   try {
     const validatedFields =
-      frameSchema.safeParse(values);
+      lensSchema.safeParse(values);
 
     if (!validatedFields.success) {
       return {
@@ -20,28 +22,28 @@ export async function createFrame(
 
     const data = validatedFields.data;
 
-    const existingFrame =
-      await prisma.frame.findUnique({
+    const existingLens =
+      await prisma.lens.findUnique({
         where: {
           slug: data.slug,
         },
       });
 
-    if (existingFrame) {
+    if (existingLens) {
       return {
         success: false,
         message:
-          "Frame with this slug already exists",
+          "Lens with this slug already exists",
       };
     }
 
-    await prisma.frame.create({
+    await prisma.lens.create({
       data,
     });
 
     return {
       success: true,
-      message: "Frame created",
+      message: "Lens created",
     };
   } catch (error) {
     console.log(error);

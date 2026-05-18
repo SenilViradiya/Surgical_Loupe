@@ -17,11 +17,12 @@ import {
 } from "@/lib/generated/prisma";
 
 import {
-  frameSchema,
-} from "@/lib/validations/frame";
-import { updateFrame } from "@/actions/frames/update-frame";
+  headlightSchema,
+} from "@/lib/validations/headlight";
 
-import { createFrame } from "@/actions/frames/create-frame";
+import { updateHeadlight } from "@/actions/headlights/update-headlight";
+
+import { createHeadlight } from "@/actions/headlights/create-headlight";
 
 import { Button } from "@/components/ui/button";
 
@@ -43,16 +44,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { ImageUpload } from "@/components/shared/image-upload";
+
 import { ModelUpload } from "@/components/shared/model-upload";
-import { Frame } from "@/lib/generated/prisma";
+
+import { Headlight } from "@/lib/generated/prisma";
 
 interface Props {
-  initialData?: Frame | null;
+  initialData?: Headlight | null;
 
   isEdit?: boolean;
 }
-export function FrameForm({
+
+export function HeadlightForm({
   initialData,
   isEdit,
 }: Props) {
@@ -61,44 +66,44 @@ export function FrameForm({
   const [isPending, startTransition] =
     useTransition();
 
-  const form = useForm<z.input<typeof frameSchema>>({
-    resolver: zodResolver(frameSchema),
+  const form = useForm<z.input<typeof headlightSchema>>({
+    resolver: zodResolver(headlightSchema),
 
     defaultValues: {
-    name:
-      initialData?.name ?? "",
+      name:
+        initialData?.name ?? "",
 
-    slug:
-      initialData?.slug ?? "",
+      slug:
+        initialData?.slug ?? "",
 
-    description:
-      initialData?.description ?? "",
+      description:
+        initialData?.description ?? "",
 
-    thumbnailUrl:
-      initialData?.thumbnailUrl ?? "",
+      thumbnailUrl:
+        initialData?.thumbnailUrl ?? "",
 
-    modelUrl:
-      initialData?.modelUrl ?? "",
+      modelUrl:
+        initialData?.modelUrl ?? "",
 
-    price:
-      initialData?.price ?? 0,
+      price:
+        initialData?.price ?? 0,
 
-    status:
-      initialData?.status ??
-      ProductStatus.ACTIVE,
-  },
+      status:
+        initialData?.status ??
+        ProductStatus.ACTIVE,
+    },
   });
 
-    const onSubmit: SubmitHandler<
-    z.input<typeof frameSchema>
+  const onSubmit: SubmitHandler<
+    z.input<typeof headlightSchema>
   > = (values) => {
     startTransition(async () => {
       const response = isEdit
-        ? await updateFrame(
+        ? await updateHeadlight(
             initialData!.id,
             values
           )
-        : await createFrame(values);
+        : await createHeadlight(values);
 
       if (!response.success) {
         toast.error(response.message);
@@ -108,7 +113,7 @@ export function FrameForm({
 
       toast.success(response.message);
 
-      router.push("/admin/frames");
+      router.push("/admin/headlights");
     });
   };
 
@@ -131,7 +136,7 @@ export function FrameForm({
 
               <FormControl>
                 <Input
-                  placeholder="Frame name"
+                  placeholder="Headlight name"
                   {...field}
                 />
               </FormControl>
@@ -152,7 +157,7 @@ export function FrameForm({
 
               <FormControl>
                 <Input
-                  placeholder="frame-slug"
+                  placeholder="headlight-slug"
                   {...field}
                 />
               </FormControl>
@@ -161,63 +166,64 @@ export function FrameForm({
             </FormItem>
           )}
         />
+
         <FormField
-            control={form.control}
-            name="thumbnailUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Thumbnail
-                </FormLabel>
+          control={form.control}
+          name="thumbnailUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Thumbnail
+              </FormLabel>
 
-                <FormControl>
-                 <ImageUpload
-              value={field.value}
-              onChange={(url) => {
-                form.setValue(
-                  "thumbnailUrl",
-                  url,
-                  {
-                    shouldValidate: true,
-                  }
-                );
-              }}
-            />
-                </FormControl>
+              <FormControl>
+                <ImageUpload
+                  value={field.value}
+                  onChange={(url) => {
+                    form.setValue(
+                      "thumbnailUrl",
+                      url,
+                      {
+                        shouldValidate: true,
+                      }
+                    );
+                  }}
+                />
+              </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-         />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-         <FormField
-            control={form.control}
-            name="modelUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  GLB Model
-                </FormLabel>
+        <FormField
+          control={form.control}
+          name="modelUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                GLB Model
+              </FormLabel>
 
-                <FormControl>
-                 <ModelUpload
-              value={field.value}
-              onChange={(url) => {
-                form.setValue(
-                  "modelUrl",
-                  url,
-                  {
-                    shouldValidate: true,
-                  }
-                );
-              }}
-            />
-                </FormControl>
+              <FormControl>
+                <ModelUpload
+                  value={field.value ?? ""}
+                  onChange={(url) => {
+                    form.setValue(
+                      "modelUrl",
+                      url,
+                      {
+                        shouldValidate: true,
+                      }
+                    );
+                  }}
+                />
+              </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -231,7 +237,6 @@ export function FrameForm({
               <FormControl>
                 <Input
                   type="number"
-                  // ensure the value type matches HTMLInputElement expectations
                   value={field.value as unknown as number | undefined}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                   onBlur={field.onBlur}
@@ -258,24 +263,25 @@ export function FrameForm({
                 onValueChange={
                   field.onChange
                 }
-                defaultValue={
-                  field.value
-                }
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                 </FormControl>
 
                 <SelectContent>
-                  <SelectItem value="ACTIVE">
-                    ACTIVE
-                  </SelectItem>
-
-                  <SelectItem value="INACTIVE">
-                    INACTIVE
-                  </SelectItem>
+                  {Object.values(
+                    ProductStatus
+                  ).map((status) => (
+                    <SelectItem
+                      key={status}
+                      value={status}
+                    >
+                      {status}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
@@ -288,13 +294,7 @@ export function FrameForm({
           type="submit"
           disabled={isPending}
         >
-       {isPending
-      ? isEdit
-        ? "Updating..."
-        : "Creating..."
-      : isEdit
-      ? "Update Frame"
-      : "Create Frame"}
+          {isEdit ? "Update" : "Create"} Headlight
         </Button>
       </form>
     </Form>

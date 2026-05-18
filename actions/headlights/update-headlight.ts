@@ -1,16 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import {frameSchema} from "@/lib/validations/frame";
 
-export async function updateFrame(
+import { z } from "zod";
+
+import { headlightSchema } from "@/lib/validations/headlight";
+
+export async function updateHeadlight(
   id: string,
-  values: z.input<typeof frameSchema>
+  values: z.input<typeof headlightSchema>
 ) {
   try {
     const validatedFields =
-      frameSchema.safeParse(values);
+      headlightSchema.safeParse(values);
 
     if (!validatedFields.success) {
       return {
@@ -19,7 +21,7 @@ export async function updateFrame(
       };
     }
 
-    await prisma.frame.update({
+    await prisma.headlight.update({
       where: {
         id,
       },
@@ -29,7 +31,7 @@ export async function updateFrame(
 
     return {
       success: true,
-      message: "Frame updated",
+      message: "Headlight updated",
     };
   } catch (error) {
     console.log(error);

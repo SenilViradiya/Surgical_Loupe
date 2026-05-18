@@ -1,16 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import {frameSchema} from "@/lib/validations/frame";
 
-export async function updateFrame(
+import { z } from "zod";
+
+import { lensSchema } from "@/lib/validations/lens";
+
+export async function updateLens(
   id: string,
-  values: z.input<typeof frameSchema>
+  values: z.input<typeof lensSchema>
 ) {
   try {
     const validatedFields =
-      frameSchema.safeParse(values);
+      lensSchema.safeParse(values);
 
     if (!validatedFields.success) {
       return {
@@ -19,7 +21,7 @@ export async function updateFrame(
       };
     }
 
-    await prisma.frame.update({
+    await prisma.lens.update({
       where: {
         id,
       },
@@ -29,7 +31,7 @@ export async function updateFrame(
 
     return {
       success: true,
-      message: "Frame updated",
+      message: "Lens updated",
     };
   } catch (error) {
     console.log(error);

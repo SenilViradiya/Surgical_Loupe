@@ -17,11 +17,12 @@ import {
 } from "@/lib/generated/prisma";
 
 import {
-  frameSchema,
-} from "@/lib/validations/frame";
-import { updateFrame } from "@/actions/frames/update-frame";
+  lensSchema,
+} from "@/lib/validations/lens";
 
-import { createFrame } from "@/actions/frames/create-frame";
+import { updateLens } from "@/actions/lenses/update-lens";
+
+import { createLens } from "@/actions/lenses/create-lens";
 
 import { Button } from "@/components/ui/button";
 
@@ -43,16 +44,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { ImageUpload } from "@/components/shared/image-upload";
-import { ModelUpload } from "@/components/shared/model-upload";
-import { Frame } from "@/lib/generated/prisma";
+
+import { Lens } from "@/lib/generated/prisma";
 
 interface Props {
-  initialData?: Frame | null;
+  initialData?: Lens | null;
 
   isEdit?: boolean;
 }
-export function FrameForm({
+
+export function LensForm({
   initialData,
   isEdit,
 }: Props) {
@@ -61,44 +64,44 @@ export function FrameForm({
   const [isPending, startTransition] =
     useTransition();
 
-  const form = useForm<z.input<typeof frameSchema>>({
-    resolver: zodResolver(frameSchema),
+  const form = useForm<z.input<typeof lensSchema>>({
+    resolver: zodResolver(lensSchema),
 
     defaultValues: {
-    name:
-      initialData?.name ?? "",
+      name:
+        initialData?.name ?? "",
 
-    slug:
-      initialData?.slug ?? "",
+      slug:
+        initialData?.slug ?? "",
 
-    description:
-      initialData?.description ?? "",
+      description:
+        initialData?.description ?? "",
 
-    thumbnailUrl:
-      initialData?.thumbnailUrl ?? "",
+      thumbnailUrl:
+        initialData?.thumbnailUrl ?? "",
 
-    modelUrl:
-      initialData?.modelUrl ?? "",
+      magnification:
+        initialData?.magnification ?? "",
 
-    price:
-      initialData?.price ?? 0,
+      price:
+        initialData?.price ?? 0,
 
-    status:
-      initialData?.status ??
-      ProductStatus.ACTIVE,
-  },
+      status:
+        initialData?.status ??
+        ProductStatus.ACTIVE,
+    },
   });
 
-    const onSubmit: SubmitHandler<
-    z.input<typeof frameSchema>
+  const onSubmit: SubmitHandler<
+    z.input<typeof lensSchema>
   > = (values) => {
     startTransition(async () => {
       const response = isEdit
-        ? await updateFrame(
+        ? await updateLens(
             initialData!.id,
             values
           )
-        : await createFrame(values);
+        : await createLens(values);
 
       if (!response.success) {
         toast.error(response.message);
@@ -108,7 +111,7 @@ export function FrameForm({
 
       toast.success(response.message);
 
-      router.push("/admin/frames");
+      router.push("/admin/lenses");
     });
   };
 
@@ -131,7 +134,7 @@ export function FrameForm({
 
               <FormControl>
                 <Input
-                  placeholder="Frame name"
+                  placeholder="Lens name"
                   {...field}
                 />
               </FormControl>
@@ -152,7 +155,7 @@ export function FrameForm({
 
               <FormControl>
                 <Input
-                  placeholder="frame-slug"
+                  placeholder="lens-slug"
                   {...field}
                 />
               </FormControl>
@@ -161,63 +164,56 @@ export function FrameForm({
             </FormItem>
           )}
         />
+
         <FormField
-            control={form.control}
-            name="thumbnailUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Thumbnail
-                </FormLabel>
+          control={form.control}
+          name="thumbnailUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Thumbnail
+              </FormLabel>
 
-                <FormControl>
-                 <ImageUpload
-              value={field.value}
-              onChange={(url) => {
-                form.setValue(
-                  "thumbnailUrl",
-                  url,
-                  {
-                    shouldValidate: true,
-                  }
-                );
-              }}
-            />
-                </FormControl>
+              <FormControl>
+                <ImageUpload
+                  value={field.value}
+                  onChange={(url) => {
+                    form.setValue(
+                      "thumbnailUrl",
+                      url,
+                      {
+                        shouldValidate: true,
+                      }
+                    );
+                  }}
+                />
+              </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-         />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-         <FormField
-            control={form.control}
-            name="modelUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  GLB Model
-                </FormLabel>
+        <FormField
+          control={form.control}
+          name="magnification"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Magnification
+              </FormLabel>
 
-                <FormControl>
-                 <ModelUpload
-              value={field.value}
-              onChange={(url) => {
-                form.setValue(
-                  "modelUrl",
-                  url,
-                  {
-                    shouldValidate: true,
-                  }
-                );
-              }}
-            />
-                </FormControl>
+              <FormControl>
+                <Input
+                  placeholder="2.5x"
+                  {...field}
+                />
+              </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -231,7 +227,6 @@ export function FrameForm({
               <FormControl>
                 <Input
                   type="number"
-                  // ensure the value type matches HTMLInputElement expectations
                   value={field.value as unknown as number | undefined}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                   onBlur={field.onBlur}
@@ -258,24 +253,25 @@ export function FrameForm({
                 onValueChange={
                   field.onChange
                 }
-                defaultValue={
-                  field.value
-                }
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                 </FormControl>
 
                 <SelectContent>
-                  <SelectItem value="ACTIVE">
-                    ACTIVE
-                  </SelectItem>
-
-                  <SelectItem value="INACTIVE">
-                    INACTIVE
-                  </SelectItem>
+                  {Object.values(
+                    ProductStatus
+                  ).map((status) => (
+                    <SelectItem
+                      key={status}
+                      value={status}
+                    >
+                      {status}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
@@ -288,13 +284,7 @@ export function FrameForm({
           type="submit"
           disabled={isPending}
         >
-       {isPending
-      ? isEdit
-        ? "Updating..."
-        : "Creating..."
-      : isEdit
-      ? "Update Frame"
-      : "Create Frame"}
+          {isEdit ? "Update" : "Create"} Lens
         </Button>
       </form>
     </Form>

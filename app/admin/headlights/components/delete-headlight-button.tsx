@@ -4,7 +4,7 @@ import { Trash } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 
-import { deleteFrame } from "@/actions/frames/delete-frame";
+import { deleteHeadlight } from "@/actions/headlights/delete-headlight";
 
 import { DeleteAlert } from "@/components/shared/delete-alert";
 
@@ -16,7 +16,7 @@ interface Props {
   id: string;
 }
 
-export function DeleteFrameButton({
+export function DeleteHeadlightButton({
   id,
 }: Props) {
   const router = useRouter();
@@ -24,7 +24,7 @@ export function DeleteFrameButton({
   const handleDelete =
     async () => {
       const response =
-        await deleteFrame(id);
+        await deleteHeadlight(id);
 
       if (
         response.success
