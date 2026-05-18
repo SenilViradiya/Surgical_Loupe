@@ -21,23 +21,30 @@ import { useConfiguratorStore } from "@/store/configurator-store";
 import { Model } from "./model";
 
 interface Props {
-  initialFrameUrl?: string;
+  initialFrame?: {
+    id: string;
+    name: string;
+    price: number;
+    modelUrl: string;
+  };
 }
 
 export function ConfiguratorScene({
-  initialFrameUrl,
+  initialFrame,
 }: Props) {
   const {
-    frameUrl,
+    frame,
+    lens,
+    headlight,
     setFrame,
   } =
     useConfiguratorStore();
 
   useEffect(() => {
-    if (!frameUrl && initialFrameUrl) {
-      setFrame(initialFrameUrl);
+    if (!frame && initialFrame) {
+      setFrame(initialFrame);
     }
-  }, [frameUrl, initialFrameUrl, setFrame]);
+  }, [frame, initialFrame, setFrame]);
 
   return (
     <div className="h-[600px] w-full rounded-2xl border bg-black">
@@ -56,10 +63,24 @@ export function ConfiguratorScene({
           intensity={2}
         />
 
-        <Suspense fallback={ <CanvasLoader />}>
-          {frameUrl && (
+        <Suspense fallback={<CanvasLoader />}>
+          {frame && (
             <Model
-              url={frameUrl}
+              url={frame.modelUrl}
+            />
+          )}
+
+          {lens && (
+            <Model
+              url={lens.modelUrl}
+            />
+          )}
+
+          {headlight && (
+            <Model
+              url={
+                headlight.modelUrl
+              }
             />
           )}
 

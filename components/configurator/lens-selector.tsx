@@ -2,40 +2,42 @@
 
 import Image from "next/image";
 
-import { cn } from "@/lib/utils";
+import { Lens } from "@/lib/generated/prisma";
 
-import { Frame } from "@/lib/generated/prisma";
+import { cn } from "@/lib/utils";
 
 import { useConfiguratorStore } from "@/store/configurator-store";
 
 interface Props {
-  frames: Frame[];
+  lenses: Lens[];
 }
 
-export function FrameSelector({
-  frames,
+export function LensSelector({
+  lenses,
 }: Props) {
   const {
-    frame : selectedFrame,
-    setFrame,
+    lens: selectedLens,
+    setLens,
   } =
     useConfiguratorStore();
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {frames.map((frame) => {
+      {lenses.map((lens) => {
         const isActive =
-          selectedFrame?.id === frame.id
+          selectedLens?.id ===
+          lens.id;
 
         return (
           <button
-            key={frame.id}
+            key={lens.id}
             onClick={() =>
-              setFrame({
-                  id: frame.id,
-                  name: frame.name,
-                  price: frame.price,
-                  modelUrl: frame.modelUrl,
+              setLens({
+                id: lens.id,
+                name: lens.name,
+                price: lens.price,
+                modelUrl:
+                  lens.modelUrl,
               })
             }
             className={cn(
@@ -44,26 +46,30 @@ export function FrameSelector({
                 "border-black ring-2 ring-black"
             )}
           >
-            {frame.thumbnailUrl && (
-              <div className="relative h-40 w-full">
+            {lens.thumbnailUrl && (
+              <div className="relative h-32 w-full">
                 <Image
                   src={
-                    frame.thumbnailUrl
+                    lens.thumbnailUrl
                   }
-                  alt={frame.name}
+                  alt={lens.name}
                   fill
                   className="object-cover"
                 />
               </div>
             )}
 
-            <div className="space-y-2 p-4">
+            <div className="space-y-1 p-4">
               <h3 className="font-semibold">
-                {frame.name}
+                {lens.name}
               </h3>
 
               <p className="text-muted-foreground text-sm">
-                ₹{frame.price}
+                {lens.magnification}
+              </p>
+
+              <p className="text-sm font-medium">
+                ₹{lens.price}
               </p>
             </div>
           </button>

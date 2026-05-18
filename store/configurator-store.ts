@@ -1,47 +1,68 @@
 import { create } from "zustand";
 
 interface ConfiguratorState {
-  frameUrl?: string;
+  frame?: {
+    id: string;
+    name: string;
+    price: number;
+    modelUrl: string;
+  };
 
-  lensUrl?: string;
+  lens?: {
+    id: string;
+    name: string;
+    price: number;
+    modelUrl: string;
+  };
 
-  headlightUrl?: string;
+  headlight?: {
+    id: string;
+    name: string;
+    price: number;
+    modelUrl: string;
+  };
 
   setFrame: (
-    url: string
+    frame: ConfiguratorState["frame"]
   ) => void;
 
   setLens: (
-    url: string
+    lens: ConfiguratorState["lens"]
   ) => void;
 
   setHeadlight: (
-    url: string
+    headlight: ConfiguratorState["headlight"]
   ) => void;
 }
 
 export const useConfiguratorStore =
   create<ConfiguratorState>(
     (set) => ({
-      frameUrl: undefined,
+      frame: undefined,
 
-      lensUrl: undefined,
+      lens: undefined,
 
-      headlightUrl: undefined,
+      headlight: undefined,
 
-      setFrame: (url) =>
+      setFrame: (
+        frame
+      ) =>
         set({
-          frameUrl: url,
+          frame,
         }),
 
-      setLens: (url) =>
+      setLens: (
+        lens
+      ) =>
         set({
-          lensUrl: url,
+          lens,
         }),
 
-      setHeadlight: (url) =>
+      setHeadlight: (
+        headlight
+      ) =>
         set({
-          headlightUrl: url,
+          headlight,
         }),
     })
   );

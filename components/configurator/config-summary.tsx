@@ -1,28 +1,21 @@
 "use client";
 
-import { Frame } from "@/lib/generated/prisma";
-
 import { useConfiguratorStore } from "@/store/configurator-store";
 
-interface Props {
-  frames: Frame[];
-}
-
-export function ConfigSummary({
-  frames,
-}: Props) {
-  const { frameUrl } =
+export function ConfigSummary() {
+  const {
+    frame,
+    lens,
+    headlight,
+  } =
     useConfiguratorStore();
 
-  const selectedFrame =
-    frames.find(
-      (frame) =>
-        frame.modelUrl ===
-        frameUrl
-    );
-
   const total =
-    selectedFrame?.price ?? 0;
+    (frame?.price ?? 0) +
+    (lens?.price ?? 0) +
+    (headlight?.price ?? 0);
+
+  
 
   return (
     <div className="rounded-2xl border bg-white p-6">
@@ -35,10 +28,24 @@ export function ConfigSummary({
           <span>Frame</span>
 
           <span>
-            {selectedFrame?.name ??
-              "-"}
+            {frame?.name ?? "-"}
           </span>
         </div>
+        <div className="flex items-center justify-between">
+            <span>Lens</span>
+
+            <span>
+                {lens?.name ?? "-"}
+            </span>
+            </div>
+
+            <div className="flex items-center justify-between">
+            <span>Headlight</span>
+
+            <span>
+                {headlight?.name ?? "-"}
+            </span>
+            </div>
 
         <div className="flex items-center justify-between font-semibold">
           <span>Total</span>
