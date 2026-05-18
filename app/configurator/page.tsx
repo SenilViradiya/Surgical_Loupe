@@ -6,6 +6,7 @@ import { FrameSelector } from "@/components/configurator/frame-selector";
 import { LensSelector } from "@/components/configurator/lens-selector";
 import { HeadlightSelector } from "@/components/configurator/headlight-selector";
 import { ConfigSummary } from "@/components/configurator/config-summary";
+import { LeadForm } from "@/components/configurator/lead-form";
 
 export default async function ConfiguratorPage() {
   const [
@@ -88,6 +89,7 @@ export default async function ConfiguratorPage() {
               />
             </div>
             <ConfigSummary />
+            <LeadForm />
           </div>
         </div>
       </div>
