@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getFrame } from "@/actions/frames/get-frames";
+import { prisma } from "@/lib/prisma";
 
 import { DashboardShell } from "@/components/layouts/dashboard-shell";
 
@@ -15,19 +15,20 @@ import { FrameForm } from "@/components/forms/frame-form";
 import { PageHeader } from "@/components/shared/page-header";
 
 interface Props {
-  params: Promise<{
+  params: {
     frameId: string;
-  }>;
+  };
 }
 
 export default async function EditFramePage({
   params,
 }: Props) {
-  const { frameId } =
-    await params;
-
   const frame =
-    await getFrame(frameId);
+    await prisma.frame.findFirst({
+      where: {
+        id: params.frameId,
+      },
+    });
 
   if (!frame) {
     return notFound();

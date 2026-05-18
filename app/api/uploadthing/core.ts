@@ -9,42 +9,32 @@ export const ourFileRouter = {
   imageUploader: f({
     image: {
       maxFileSize: "4MB",
-
       maxFileCount: 1,
     },
-  })
+  }, {
+    awaitServerData: false,
+  }).onUploadComplete(async ({ file }) => {
+    console.log("Upload complete", file.url);
 
-    .middleware(async () => {
-      return {};
-    })
-
-    .onUploadComplete(async ({
-      file,
-    }) => {
-      return {
-        url: file.url,
-      };
-    }),
+    return {
+      url: file.url,
+    };
+  }),
 
   modelUploader: f({
     blob: {
       maxFileSize: "32MB",
-
       maxFileCount: 1,
     },
-  })
+  }, {
+    awaitServerData: false,
+  }).onUploadComplete(async ({ file }) => {
+    console.log("Model uploaded", file.url);
 
-    .middleware(async () => {
-      return {};
-    })
-
-    .onUploadComplete(async ({
-      file,
-    }) => {
-      return {
-        url: file.url,
-      };
-    }),
+    return {
+      url: file.url,
+    };
+  }),
 } satisfies FileRouter;
 
 export type OurFileRouter =

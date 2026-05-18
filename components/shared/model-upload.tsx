@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
 import {
-  UploadDropzone,
-} from "@uploadthing/react";
+  useUploadThing,
+} from "@/utils/uploadthing";
 
 interface Props {
   value?: string;
@@ -16,38 +18,57 @@ export function ModelUpload({
   value,
   onChange,
 }: Props) {
+  const [uploaded, setUploaded] =
+    useState(!!value);
+
+  const { startUpload, isUploading } =
+    useUploadThing(
+      "modelUploader",
+      {
+        onClientUploadComplete:
+          (res) => {
+            console.log(res);
+
+            if (!res?.[0]) return;
+
+            setUploaded(true);
+
+            onChange(
+              res[0].url
+            );
+          },
+
+        onUploadError: (
+          error
+        ) => {
+          console.log(error);
+
+          alert(error.message);
+        },
+      }
+    );
+
   return (
     <div className="space-y-4">
-      {value && (
+      {uploaded && (
         <div className="rounded-xl border p-4 text-sm">
           Model uploaded
         </div>
       )}
 
-      <UploadDropzone
-        endpoint="modelUploader"
-        appearance={{
-          container:
-            "border-dashed border-muted-foreground/25",
+      <input
+        type="file"
+        accept=".glb"
+        disabled={isUploading}
+        onChange={async (e) => {
+          const file =
+            e.target.files?.[0];
 
-          label:
-            "text-sm text-muted-foreground",
-        }}
-        onClientUploadComplete={(
-          res
-        ) => {
-          if (!res?.[0]) {
-            return;
-          }
+          if (!file) return;
 
-          onChange(
-            res[0].ufsUrl
-          );
-        }}
-        onUploadError={(
-          error: Error
-        ) => {
-          console.log(error);
+          await startUpload([
+            file,
+          ]);
         }}
       />
     </div>

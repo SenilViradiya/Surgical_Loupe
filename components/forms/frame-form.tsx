@@ -18,7 +18,6 @@ import {
 
 import {
   frameSchema,
-  FrameInput,
 } from "@/lib/validations/frame";
 import { updateFrame } from "@/actions/frames/update-frame";
 
@@ -110,8 +109,6 @@ export function FrameForm({
       toast.success(response.message);
 
       router.push("/admin/frames");
-
-      router.refresh();
     });
   };
 
@@ -174,12 +171,18 @@ export function FrameForm({
                 </FormLabel>
 
                 <FormControl>
-                  <ImageUpload
-                    value={field.value}
-                    onChange={
-                      field.onChange
-                    }
-                  />
+                 <ImageUpload
+              value={field.value}
+              onChange={(url) => {
+                form.setValue(
+                  "thumbnailUrl",
+                  url,
+                  {
+                    shouldValidate: true,
+                  }
+                );
+              }}
+            />
                 </FormControl>
 
                 <FormMessage />
@@ -197,12 +200,18 @@ export function FrameForm({
                 </FormLabel>
 
                 <FormControl>
-                  <ModelUpload
-                    value={field.value}
-                    onChange={
-                      field.onChange
-                    }
-                  />
+                 <ModelUpload
+              value={field.value}
+              onChange={(url) => {
+                form.setValue(
+                  "modelUrl",
+                  url,
+                  {
+                    shouldValidate: true,
+                  }
+                );
+              }}
+            />
                 </FormControl>
 
                 <FormMessage />

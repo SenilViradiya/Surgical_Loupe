@@ -56,41 +56,35 @@ export const columns: ColumnDef<Frame>[] =
     {
       id: "actions",
 
-      cell: ({ row }) => {
-        const frame = row.original;
+   cell: ({ row }) => {
+  const frame = row.original;
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              asChild
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
 
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                asChild
-              >
-                <Link
-                  href={`/admin/frames/${frame.id}`}
-                >
-                  Edit
-                </Link>
-              </DropdownMenuItem>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={() => {
+            window.location.href = `/admin/frames/${frame.id}`;
+          }}
+        >
+          Edit
+        </DropdownMenuItem>
 
-             <DropdownMenuItem asChild>
-              <DeleteFrameButton
-                id={frame.id}
-              />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
+        <DeleteFrameButton
+          id={frame.id}
+        />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+},
     },
   ];

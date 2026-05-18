@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 
+import { useState } from "react";
+
 import {
-  UploadDropzone,
-} from "@uploadthing/react";
+  useUploadThing,
+} from "@/utils/uploadthing";
 
 interface Props {
   value?: string;
@@ -18,45 +20,67 @@ export function ImageUpload({
   value,
   onChange,
 }: Props) {
+  const [preview, setPreview] =
+    useState(value);
+
+  const { startUpload, isUploading } =
+    useUploadThing(
+      "imageUploader",
+      {
+        onClientUploadComplete:
+          (res) => {
+            console.log(res);
+
+            if (!res?.[0]) return;
+
+            const uploadedUrl =
+              res[0].url;
+
+            setPreview(
+              uploadedUrl
+            );
+
+            onChange(
+              uploadedUrl
+            );
+          },
+
+        onUploadError: (
+          error
+        ) => {
+          console.log(error);
+
+          alert(error.message);
+        },
+      }
+    );
+
   return (
     <div className="space-y-4">
-      {value && (
+      {preview && (
         <div className="relative h-40 w-40 overflow-hidden rounded-xl border">
           <Image
-            src={value}
+            src={preview}
             alt="Upload"
-
             fill
-
             className="object-cover"
           />
         </div>
       )}
 
-      <UploadDropzone
-        endpoint="imageUploader"
-        appearance={{
-          container:
-            "border-dashed border-muted-foreground/25",
+      <input
+        type="file"
+        accept="image/*"
+        disabled={isUploading}
+        onChange={async (e) => {
+          const file =
+            e.target.files?.[0];
 
-          label:
-            "text-sm text-muted-foreground",
-        }}
-        onClientUploadComplete={(
-          res
-        ) => {
-          if (!res?.[0]) {
-            return;
-          }
+          if (!file) return;
 
-          onChange(
-            res[0].ufsUrl
-          );
-        }}
-        onUploadError={(
-          error: Error
-        ) => {
-          console.log(error);
+          await startUpload([
+            file,
+          ]);
         }}
       />
     </div>

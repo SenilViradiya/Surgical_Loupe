@@ -1,15 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-
-import {
-  frameSchema,
-  FrameInput,
-} from "@/lib/validations/frame";
+import { z } from "zod";
+import {frameSchema} from "@/lib/validations/frame";
 
 export async function updateFrame(
   id: string,
-  values: FrameInput
+  values: z.input<typeof frameSchema>
 ) {
   try {
     const validatedFields =
