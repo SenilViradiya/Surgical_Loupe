@@ -3,6 +3,10 @@ import { getLeads } from "@/actions/leads/get-leads";
 import { LeadsTable } from "@/components/leads/leads-table";
 import { ActivityTimeline } from "@/components/leads/activity-timeline";
 import { prisma } from "@/lib/prisma";
+import { DashboardShell } from "@/components/layouts/dashboard-shell";
+import { Sidebar } from "@/components/layouts/sidebar";
+import { Navbar } from "@/components/layouts/navbar";
+import { adminSidebarItems } from "@/constants/admin-sidebar";
 export default async function LeadsPage() {
   const leads =
     await getLeads();
@@ -20,11 +24,19 @@ export default async function LeadsPage() {
     });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">
-          Leads
-        </h1>
+    <DashboardShell
+      sidebar={
+        <Sidebar
+          items={adminSidebarItems}
+        />
+      }
+      navbar={<Navbar />}
+    >
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Leads
+          </h1>
 
         <p className="text-muted-foreground">
           Manage incoming quote requests
@@ -75,14 +87,15 @@ export default async function LeadsPage() {
         </div>
       </div>
 
-      <LeadsTable
-        leads={leads}
-      />
-      <ActivityTimeline
-        activities={
-          activities
-        }
-      />
-    </div>
+        <LeadsTable
+          leads={leads}
+        />
+        <ActivityTimeline
+          activities={
+            activities
+          }
+        />
+      </div>
+    </DashboardShell>
   );
 }
