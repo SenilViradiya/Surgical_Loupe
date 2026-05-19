@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
 
+import { sendLeadEmail } from "@/actions/emails/send-lead-email";
+
 export function LeadForm() {
   const router = useRouter();
 
@@ -102,6 +104,19 @@ export function LeadForm() {
 
           return;
         }
+        await sendLeadEmail({
+          customerEmail:
+            form.email,
+
+          customerName:
+            form.fullName,
+
+          frameName:
+            frame.name,
+
+          lensName:
+            lens.name,
+        });
 
         toast.success(
           "Quote request submitted"

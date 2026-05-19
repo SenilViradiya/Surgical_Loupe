@@ -268,3 +268,22 @@ model Event {
   
   
 }
+model ActivityLog {
+  id          String   @id @default(cuid())
+
+  action      String
+
+  entityType  String
+
+  entityId    String
+
+  description String?
+
+  userEmail   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+}

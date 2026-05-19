@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity-logger";
 
 interface Props {
   fullName: string;
@@ -62,6 +63,22 @@ export async function createLead(
             dealerCoverage?.dealerId,
         },
       });
+
+    await logActivity({
+      action:
+        "LEAD_CREATED",
+
+      entityType:
+        "Lead",
+
+      entityId:
+        lead.id,
+
+      description: `Lead created for ${values.fullName}`,
+
+      userEmail:
+        values.email,
+    });
 
     return {
       success: true,

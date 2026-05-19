@@ -1,10 +1,23 @@
 import { getLeads } from "@/actions/leads/get-leads";
 
 import { LeadsTable } from "@/components/leads/leads-table";
-
+import { ActivityTimeline } from "@/components/leads/activity-timeline";
+import { prisma } from "@/lib/prisma";
 export default async function LeadsPage() {
   const leads =
     await getLeads();
+
+  const activities =
+    await prisma.activityLog.findMany({
+      where: {
+        entityType:
+          "Lead",
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
   return (
     <div className="space-y-6">
@@ -18,8 +31,57 @@ export default async function LeadsPage() {
         </p>
       </div>
 
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl border bg-white p-6">
+          <p className="text-muted-foreground text-sm">
+            Total Leads
+          </p>
+
+          <h2 className="mt-2 text-3xl font-bold">
+            {leads.length}
+          </h2>
+        </div>
+
+        <div className="rounded-2xl border bg-white p-6">
+          <p className="text-muted-foreground text-sm">
+            Converted
+          </p>
+
+          <h2 className="mt-2 text-3xl font-bold">
+            {
+              leads.filter(
+                (lead) =>
+                  lead.status ===
+                  "CONVERTED"
+              ).length
+            }
+          </h2>
+        </div>
+
+        <div className="rounded-2xl border bg-white p-6">
+          <p className="text-muted-foreground text-sm">
+            Pending
+          </p>
+
+          <h2 className="mt-2 text-3xl font-bold">
+            {
+              leads.filter(
+                (lead) =>
+                  lead.status ===
+                  "PENDING"
+              ).length
+            }
+          </h2>
+        </div>
+      </div>
+
       <LeadsTable
         leads={leads}
+      />
+      <ActivityTimeline
+        activities={
+          activities
+        }
       />
     </div>
   );
