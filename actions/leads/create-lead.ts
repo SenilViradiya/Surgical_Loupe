@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-logger";
+import { assignDealer } from "@/lib/assign-dealer";
 
 interface Props {
   fullName: string;
@@ -23,8 +24,10 @@ export async function createLead(
   values: Props
 ) {
   try {
-    const dealerCoverage =
-      await prisma.dealerCoverage.findFirst({
+    const dealer =
+      await assignDealer(
+        values.pincode
+      );    ({
         where: {
           pincode:
             values.pincode,
@@ -60,7 +63,7 @@ export async function createLead(
             values.configurationId,
 
           dealerId:
-            dealerCoverage?.dealerId,
+            dealer?.id,
         },
       });
 

@@ -8,6 +8,7 @@ export async function assignDealer(
       await prisma.dealerCoverage.findMany({
         where: {
           pincode,
+
           dealer: {
             isActive: true,
           },
@@ -16,7 +17,13 @@ export async function assignDealer(
         include: {
           dealer: {
             include: {
-              leads: true,
+              leads: {
+                where: {
+                  status: {
+                    not: "CLOSED",
+                  },
+                },
+              },
             },
           },
         },
@@ -29,9 +36,9 @@ export async function assignDealer(
     }
 
     /*
-      Load balancing:
-      assign dealer with
-      lowest active leads
+      Smart balancing:
+      assign dealer
+      with lowest active leads
     */
 
     const sorted =
