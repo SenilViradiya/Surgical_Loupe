@@ -107,7 +107,9 @@ export function LeadForm() {
           "Quote request submitted"
         );
 
-        router.refresh();
+        router.push(
+          `/configurator/${configuration.configurationId}`
+        );
       } catch (error) {
         console.log(error);
 

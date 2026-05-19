@@ -124,6 +124,8 @@ model Lens {
 
   thumbnailUrl  String?
 
+  modelUrl      String?
+
   magnification String
 
   price         Float

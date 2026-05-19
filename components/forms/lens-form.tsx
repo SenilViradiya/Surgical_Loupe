@@ -47,6 +47,8 @@ import {
 
 import { ImageUpload } from "@/components/shared/image-upload";
 
+import { ModelUpload } from "@/components/shared/model-upload";
+
 import { Lens } from "@/lib/generated/prisma";
 
 interface Props {
@@ -79,6 +81,9 @@ export function LensForm({
 
       thumbnailUrl:
         initialData?.thumbnailUrl ?? "",
+
+      modelUrl:
+        initialData?.modelUrl ?? "",
 
       magnification:
         initialData?.magnification ?? "",
@@ -180,6 +185,35 @@ export function LensForm({
                   onChange={(url) => {
                     form.setValue(
                       "thumbnailUrl",
+                      url,
+                      {
+                        shouldValidate: true,
+                      }
+                    );
+                  }}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="modelUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                GLB Model
+              </FormLabel>
+
+              <FormControl>
+                <ModelUpload
+                  value={field.value ?? ""}
+                  onChange={(url) => {
+                    form.setValue(
+                      "modelUrl",
                       url,
                       {
                         shouldValidate: true,
