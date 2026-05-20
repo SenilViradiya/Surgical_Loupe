@@ -61,7 +61,8 @@ export async function reassignLead({
       description: `Lead reassigned to ${dealer.name}`,
 
       userEmail:
-        session?.user?.email,
+        session?.user?.email ??
+        undefined,
     });
 
     revalidatePath(
