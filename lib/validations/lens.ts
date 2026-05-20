@@ -15,6 +15,8 @@ export const lensSchema = z.object({
 
   thumbnailUrl: z.string().optional(),
 
+  modelUrl: z.string().optional(),
+
   magnification: z
     .string()
     .min(1, "Magnification is required"),
