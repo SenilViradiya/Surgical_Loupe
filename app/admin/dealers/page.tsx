@@ -72,6 +72,17 @@ export default async function DealersPage() {
                           .length
                       }
                     </p>
+
+                    <p className="mt-1 text-sm">
+                      Converted Leads:{" "}
+                      {
+                        dealer.leads.filter(
+                          (lead) =>
+                            lead.status ===
+                            "CONVERTED"
+                        ).length
+                      }
+                    </p>
                   </div>
 
                   <span

@@ -1,8 +1,6 @@
 import { getLeads } from "@/actions/leads/get-leads";
 
 import { LeadsTable } from "@/components/leads/leads-table";
-import { ActivityTimeline } from "@/components/leads/activity-timeline";
-import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/layouts/dashboard-shell";
 import { Sidebar } from "@/components/layouts/sidebar";
 import { Navbar } from "@/components/layouts/navbar";
@@ -11,17 +9,6 @@ export default async function LeadsPage() {
   const leads =
     await getLeads();
 
-  const activities =
-    await prisma.activityLog.findMany({
-      where: {
-        entityType:
-          "Lead",
-      },
-
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
 
   return (
     <DashboardShell
@@ -89,11 +76,6 @@ export default async function LeadsPage() {
 
         <LeadsTable
           leads={leads}
-        />
-        <ActivityTimeline
-          activities={
-            activities
-          }
         />
       </div>
     </DashboardShell>

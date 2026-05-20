@@ -7,6 +7,8 @@ import { DashboardShell } from "@/components/layouts/dashboard-shell";
 import { Sidebar } from "@/components/layouts/sidebar";
 import { Navbar } from "@/components/layouts/navbar";
 import { adminSidebarItems } from "@/constants/admin-sidebar";
+import { ReassignLeadForm } from "@/components/leads/reassign-lead-form";
+import { ActivityTimeline } from "@/components/leads/activity-timeline";
 export default async function LeadDetailsPage({
   params,
 }: {
@@ -41,6 +43,30 @@ export default async function LeadDetailsPage({
   if (!lead) {
     return notFound();
   }
+
+  const activities =
+    await prisma.activityLog.findMany({
+      where: {
+        entityType:
+          "Lead",
+
+        entityId: leadId,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  const dealers =
+  await prisma.dealer.findMany({
+    where: {
+      isActive: true,
+    },
+
+    orderBy: {
+      name: "asc",
+    },
+  });
 
   return (
     <DashboardShell
@@ -228,6 +254,19 @@ export default async function LeadDetailsPage({
             </div>
           </div>
         </div>
+
+        <ActivityTimeline
+          activities={
+            activities
+          }
+        />
+        <ReassignLeadForm
+          leadId={lead.id}
+          dealers={dealers}
+          currentDealerId={
+            lead.dealerId
+          }
+        />
       </div>
     </DashboardShell>
   );
