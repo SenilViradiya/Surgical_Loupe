@@ -37,7 +37,8 @@ export function LensSelector({
                 name: lens.name,
                 price: lens.price,
                 modelUrl:
-                  lens.modelUrl,
+                  lens.modelUrl ??
+                  "",
               })
             }
             className={cn(

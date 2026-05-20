@@ -5,6 +5,8 @@ import { DashboardShell } from "@/components/layouts/dashboard-shell";
 import { Sidebar } from "@/components/layouts/sidebar";
 import { Navbar } from "@/components/layouts/navbar";
 import { adminSidebarItems } from "@/constants/admin-sidebar";
+
+export const dynamic = "force-dynamic";
 export default async function LeadsPage() {
   const leads =
     await getLeads();
