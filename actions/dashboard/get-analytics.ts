@@ -2,8 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 
+import { requireActionRole } from "@/lib/authorization";
+
+import { UserRole } from "@/lib/generated/prisma";
+
 export async function getAnalytics() {
   try {
+    await requireActionRole([
+      UserRole.ADMIN,
+    ]);
+
     const leads =
       await prisma.lead.findMany({
         orderBy: {

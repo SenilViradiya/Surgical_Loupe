@@ -2,6 +2,8 @@
 
 import { signIn } from "@/auth";
 
+import { enforceRateLimit } from "@/lib/rate-limit";
+
 import {
   loginSchema,
   LoginInput,
@@ -23,6 +25,22 @@ export async function loginUser(
 
     const { email, password } =
       validatedFields.data;
+
+    const rateLimit = enforceRateLimit(
+      `login:${email}`,
+      {
+        limit: 5,
+        windowMs: 15 * 60 * 1000,
+      }
+    );
+
+    if (!rateLimit.success) {
+      return {
+        success: false,
+        message:
+          "Too many login attempts. Try again later.",
+      };
+    }
 
     await signIn("credentials", {
       email,

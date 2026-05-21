@@ -1,8 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+
 import { logActivity } from "@/lib/activity-logger";
 import { assignDealer } from "@/lib/assign-dealer";
+
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 interface Props {
   fullName: string;
@@ -24,19 +27,26 @@ export async function createLead(
   values: Props
 ) {
   try {
-    const dealer =
-      await assignDealer(
-        values.pincode
-      );    ({
-        where: {
-          pincode:
-            values.pincode,
-        },
+    const rateLimit = enforceRateLimit(
+      `lead:${values.email}`,
+      {
+        limit: 5,
+        windowMs: 60 * 60 * 1000,
+      }
+    );
 
-        include: {
-          dealer: true,
-        },
-      });
+    if (!rateLimit.success) {
+      return {
+        success: false,
+
+        message:
+          "Too many lead submissions. Try again later.",
+      };
+    }
+
+    const dealer = await assignDealer(
+      values.pincode
+    );
 
     const lead =
       await prisma.lead.create({

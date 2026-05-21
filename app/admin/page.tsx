@@ -31,6 +31,8 @@ const dealerPerformance =
       sidebar={
         <Sidebar
           items={adminSidebarItems}
+          title="Admin Console"
+          subtitle="Platform operations"
         />
       }
       navbar={<Navbar />}

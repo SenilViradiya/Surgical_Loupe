@@ -4,12 +4,13 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 
-import { auth } from "@/auth";
-
 import { logActivity } from "@/lib/activity-logger";
+
+import { requireActionRole } from "@/lib/authorization";
 
 import {
   LeadStatus,
+  UserRole,
 } from "@/lib/generated/prisma";
 
 interface Props {
@@ -23,8 +24,37 @@ export async function updateLeadStatus({
   status,
 }: Props) {
   try {
-    const session =
-      await auth();
+    const session = await requireActionRole([
+      UserRole.ADMIN,
+      UserRole.DEALER,
+    ]);
+
+    const lead = await prisma.lead.findUnique({
+      where: {
+        id: leadId,
+      },
+
+      include: {
+        dealer: true,
+      },
+    });
+
+    if (!lead) {
+      return {
+        success: false,
+        message: "Lead not found",
+      };
+    }
+
+    if (
+      session.user.role === UserRole.DEALER &&
+      lead.dealer?.email !== session.user.email
+    ) {
+      return {
+        success: false,
+        message: "Forbidden",
+      };
+    }
 
     await prisma.lead.update({
       where: {

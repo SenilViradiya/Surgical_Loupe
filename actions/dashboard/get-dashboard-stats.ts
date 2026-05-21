@@ -2,8 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 
+import { requireActionRole } from "@/lib/authorization";
+
+import { UserRole } from "@/lib/generated/prisma";
+
 export async function getDashboardStats() {
   try {
+    await requireActionRole([
+      UserRole.ADMIN,
+    ]);
+
     const [
       totalLeads,
       convertedLeads,

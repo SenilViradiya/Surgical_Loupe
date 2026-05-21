@@ -1,21 +1,17 @@
 "use server";
 
-import { auth } from "@/auth";
+import { UserRole } from "@/lib/generated/prisma";
+
+import { requireSession } from "@/lib/authorization";
 
 import { prisma } from "@/lib/prisma";
 
 export async function getLeads() {
   try {
-    const session =
-      await auth();
-
-    if (!session?.user) {
-      return [];
-    }
+    const session = await requireSession();
 
     if (
-      session.user.role ===
-      "ADMIN"
+      session.user.role === UserRole.ADMIN
     ) {
       return await prisma.lead.findMany({
         include: {
@@ -39,8 +35,7 @@ export async function getLeads() {
     }
 
     if (
-      session.user.role ===
-      "DEALER"
+      session.user.role === UserRole.DEALER
     ) {
       return await prisma.lead.findMany({
         where: {

@@ -2,11 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 
-import { auth } from "@/auth";
-
 import { prisma } from "@/lib/prisma";
 
 import { logActivity } from "@/lib/activity-logger";
+
+import { requireActionRole } from "@/lib/authorization";
+
+import { UserRole } from "@/lib/generated/prisma";
 
 interface Props {
   leadId: string;
@@ -19,8 +21,9 @@ export async function reassignLead({
   dealerId,
 }: Props) {
   try {
-    const session =
-      await auth();
+    const session = await requireActionRole([
+      UserRole.ADMIN,
+    ]);
 
     const dealer =
       await prisma.dealer.findUnique({
