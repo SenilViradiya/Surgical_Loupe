@@ -27,6 +27,8 @@ export default async function DealersPage() {
       sidebar={
         <Sidebar
           items={adminSidebarItems}
+          title="Admin Console"
+          subtitle="Dealer network"
         />
       }
       navbar={<Navbar />}

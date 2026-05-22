@@ -15,6 +15,14 @@ export default function LoginPage() {
         </div>
 
         <LoginForm />
+        <div className="text-center">
+          <a
+            href="/forgot-password"
+            className="text-sm text-muted-foreground underline"
+          >
+            Forgot Password?
+          </a>
+        </div>
       </div>
     </div>
   );

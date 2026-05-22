@@ -91,6 +91,12 @@ enum UserRole {
   DEALER
   USER
 }
+enum DealerOnboardingStatus {
+  INVITED
+  PENDING_SETUP
+  ACTIVE
+  SUSPENDED
+}
 model Frame {
   id            String          @id @default(cuid())
 
@@ -168,6 +174,22 @@ model Dealer {
   name        String
 
   email       String    @unique
+
+  onboardingStatus DealerOnboardingStatus @default(ACTIVE)
+
+  inviteToken String?   @unique
+
+  inviteTokenExpiresAt DateTime?
+
+  profileCompletedAt DateTime?
+
+  companyName String?
+
+  businessDetails String?
+
+  address     String?
+
+  serviceRegions String?
 
   phone       String
 

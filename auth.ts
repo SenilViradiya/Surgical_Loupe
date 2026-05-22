@@ -5,12 +5,24 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 
 import authConfig from "@/auth.config";
 
 import { prisma } from "@/lib/prisma";
 
 import { UserRole } from "@/lib/generated/prisma";
+
+const googleProvider =
+  process.env.GOOGLE_CLIENT_ID &&
+  process.env.GOOGLE_CLIENT_SECRET
+    ? Google({
+        clientId:
+          process.env.GOOGLE_CLIENT_ID,
+        clientSecret:
+          process.env.GOOGLE_CLIENT_SECRET,
+      })
+    : null;
 
 export const {
   handlers,
@@ -27,6 +39,10 @@ export const {
   ...authConfig,
 
   providers: [
+    ...(googleProvider
+      ? [googleProvider]
+      : []),
+
     Credentials({
       credentials: {
         email: {},
@@ -72,6 +88,23 @@ export const {
     async jwt({ token, user }) {
       if (user?.role) {
         token.role = user.role;
+      }
+
+      if (!token.role && token.email) {
+        const dbUser =
+          await prisma.user.findUnique({
+            where: {
+              email: token.email,
+            },
+
+            select: {
+              role: true,
+            },
+          });
+
+        token.role =
+          dbUser?.role ??
+          UserRole.USER;
       }
 
       return token;

@@ -5,32 +5,50 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { Home } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface SidebarItem {
   label: string;
   href: string;
+  icon?: LucideIcon;
 }
 
 interface Props {
   items: SidebarItem[];
+  title?: string;
+  subtitle?: string;
 }
 
-export function Sidebar({ items }: Props) {
+export function Sidebar({
+  items,
+  title = "Dashboard",
+  subtitle = "Navigation",
+}: Props) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 shrink-0 border-r bg-slate-900 text-white">
+    <aside className="w-72 shrink-0 border-r border-white/10 bg-slate-950 text-white">
       <div className="flex items-center gap-3 border-b px-6 py-5">
-        <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-400" />
-        <h2 className="text-sm font-semibold tracking-wide">
-          Admin Console
-        </h2>
+        <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-400 shadow-lg shadow-cyan-500/20" />
+        <div>
+          <h2 className="text-sm font-semibold tracking-wide">
+            {title}
+          </h2>
+
+          <p className="text-xs text-white/55">
+            {subtitle}
+          </p>
+        </div>
       </div>
 
       <nav className="space-y-1 p-3">
         {items.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href ||
+            pathname.startsWith(
+              `${item.href}/`
+            );
+          const Icon = item.icon;
 
           return (
             <Link
@@ -43,7 +61,11 @@ export function Sidebar({ items }: Props) {
                   : "text-white/85 hover:bg-white/5"
               )}
             >
-              <Home className="h-4 w-4 opacity-80" />
+              {Icon ? (
+                <Icon className="h-4 w-4 opacity-80" />
+              ) : (
+                <span className="h-4 w-4 rounded-full border border-white/20" />
+              )}
               <span>{item.label}</span>
             </Link>
           );

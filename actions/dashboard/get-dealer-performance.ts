@@ -2,8 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 
+import { requireActionRole } from "@/lib/authorization";
+
+import { UserRole } from "@/lib/generated/prisma";
+
 export async function getDealerPerformance() {
   try {
+    await requireActionRole([
+      UserRole.ADMIN,
+    ]);
+
     const dealers =
       await prisma.dealer.findMany({
         include: {

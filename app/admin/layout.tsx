@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 
 import { UserRole } from "@/lib/generated/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {
@@ -18,7 +20,7 @@ export default async function AdminLayout({
   if (
     session.user.role !== UserRole.ADMIN
   ) {
-    redirect("/");
+    redirect("/dealer");
   }
 
   return (

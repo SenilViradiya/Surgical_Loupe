@@ -89,6 +89,15 @@ export function LoginForm() {
           ? "Signing in..."
           : "Login"}
       </Button>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() => signIn("google", { callbackUrl: "/" })}
+      >
+        Continue with Google
+      </Button>
     </form>
   );
 }
