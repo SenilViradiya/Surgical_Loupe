@@ -24,13 +24,13 @@ export function LeadsChart({
   data,
 }: Props) {
   return (
-    <div className="rounded-2xl border bg-white p-6">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-xl font-semibold text-slate-900">
           Lead Analytics
         </h2>
 
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-slate-500">
           Monthly lead trends
         </p>
       </div>
@@ -45,26 +45,38 @@ export function LeadsChart({
           >
             <CartesianGrid
               strokeDasharray="3 3"
+              stroke="#e2e8f0"
             />
 
             <XAxis
               dataKey="month"
+              stroke="#94a3b8"
             />
 
-            <YAxis />
+            <YAxis stroke="#94a3b8" />
 
-            <Tooltip />
+            <Tooltip
+              contentStyle={{
+                borderRadius: 12,
+                border: "1px solid #e2e8f0",
+                backgroundColor: "#fff",
+              }}
+            />
 
             <Line
               type="monotone"
               dataKey="leads"
-              strokeWidth={3}
+              stroke="#334155"
+              strokeWidth={2.5}
+              dot={false}
             />
 
             <Line
               type="monotone"
               dataKey="converted"
-              strokeWidth={3}
+              stroke="#94a3b8"
+              strokeWidth={2.5}
+              dot={false}
             />
           </LineChart>
         </ResponsiveContainer>

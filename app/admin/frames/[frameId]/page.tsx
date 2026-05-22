@@ -15,18 +15,20 @@ import { FrameForm } from "@/components/forms/frame-form";
 import { PageHeader } from "@/components/shared/page-header";
 
 interface Props {
-  params: {
+  params: Promise<{
     frameId: string;
-  };
+  }>;
 }
 
 export default async function EditFramePage({
   params,
 }: Props) {
+  const { frameId } = await params;
+
   const frame =
     await prisma.frame.findFirst({
       where: {
-        id: params.frameId,
+        id: frameId,
       },
     });
 

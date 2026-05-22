@@ -5,6 +5,8 @@ import { resend } from "@/lib/resend";
 import { LeadCreatedEmail } from "@/emails/lead-created-email";
 import { z } from "zod";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { promises as fs } from "fs";
+import path from "path";
 
 const sendLeadEmailSchema = z.object({
   customerEmail: z.string().email(),
@@ -26,10 +28,27 @@ export async function sendLeadEmail(values: any) {
       return { success: false };
     }
 
+    // Load template subject if present
+    let subject = "Your Quote Request";
+
+    try {
+      const tplPath = path.resolve(process.cwd(), "config", "email-templates.json");
+      const raw = await fs.readFile(tplPath, "utf-8");
+      const data = JSON.parse(raw);
+
+      const tpl = data["lead-created"];
+
+      if (tpl?.subject) {
+        subject = tpl.subject;
+      }
+    } catch (err) {
+      // ignore and use fallback subject
+    }
+
     await resend.emails.send({
       from: "Surgical Loupe <onboarding@resend.dev>",
       to: parsed.customerEmail,
-      subject: "Your Quote Request",
+      subject,
       react: LeadCreatedEmail({
         customerName: parsed.customerName,
         frameName: parsed.frameName,
