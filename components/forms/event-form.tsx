@@ -27,7 +27,8 @@ export function EventForm() {
     useTransition();
 
   const form = useForm<z.input<typeof eventSchema>>({
-    resolver: zodResolver(eventSchema),
+    // zodResolver types can be strict when using z.coerce; cast to any to satisfy RHF types
+    resolver: zodResolver(eventSchema as any),
     defaultValues: {
       title: "",
       slug: "",

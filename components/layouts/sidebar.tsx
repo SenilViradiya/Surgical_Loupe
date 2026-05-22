@@ -5,12 +5,26 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
+import {
+  BarChart3,
+  Boxes,
+  CalendarDays,
+  Gauge,
+  Settings2,
+  ShieldAlert,
+  Shapes,
+  Users,
+  Workflow,
+} from "lucide-react";
+
+
+type IconKey = string;
 
 interface SidebarItem {
   label: string;
   href: string;
-  icon?: LucideIcon;
+  // accept string keys so server components can pass plain data
+  icon?: string | null;
 }
 
 interface Props {
@@ -43,12 +57,24 @@ export function Sidebar({
 
       <nav className="space-y-1 p-3">
         {items.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            pathname.startsWith(
-              `${item.href}/`
-            );
-          const Icon = item.icon;
+          const isDashboardItem = item.href === "/admin";
+          const isActive = isDashboardItem
+            ? pathname === item.href
+            : pathname === item.href ||
+              pathname.startsWith(`${item.href}/`);
+          const iconMap: Record<string, any> = {
+            BarChart3,
+            Boxes,
+            CalendarDays,
+            Gauge,
+            Settings2,
+            ShieldAlert,
+            Shapes,
+            Users,
+            Workflow,
+          };
+
+          const Icon = item.icon ? iconMap[item.icon as string] ?? null : null;
 
           return (
             <Link
