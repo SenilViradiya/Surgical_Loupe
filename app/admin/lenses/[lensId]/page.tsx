@@ -15,18 +15,20 @@ import { LensForm } from "@/components/forms/lens-form";
 import { PageHeader } from "@/components/shared/page-header";
 
 interface Props {
-  params: {
+  params: Promise<{
     lensId: string;
-  };
+  }>;
 }
 
 export default async function EditLensPage({
   params,
 }: Props) {
+  const { lensId } = await params;
+
   const lens =
     await prisma.lens.findFirst({
       where: {
-        id: params.lensId,
+        id: lensId,
       },
     });
 

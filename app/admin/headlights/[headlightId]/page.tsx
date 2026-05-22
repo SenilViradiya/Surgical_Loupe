@@ -15,18 +15,20 @@ import { HeadlightForm } from "@/components/forms/headlight-form";
 import { PageHeader } from "@/components/shared/page-header";
 
 interface Props {
-  params: {
+  params: Promise<{
     headlightId: string;
-  };
+  }>;
 }
 
 export default async function EditHeadlightPage({
   params,
 }: Props) {
+  const { headlightId } = await params;
+
   const headlight =
     await prisma.headlight.findFirst({
       where: {
-        id: params.headlightId,
+        id: headlightId,
       },
     });
 
