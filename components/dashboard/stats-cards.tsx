@@ -53,13 +53,13 @@ export function StatsCards({
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-2xl border bg-white p-6"
+          className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
         >
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-slate-500">
             {item.label}
           </p>
 
-          <h2 className="mt-2 text-3xl font-bold">
+          <h2 className="mt-2 text-3xl font-semibold text-slate-900">
             {item.value}
           </h2>
         </div>
