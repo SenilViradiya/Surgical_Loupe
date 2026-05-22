@@ -9,13 +9,15 @@ import { prisma } from "@/lib/prisma";
 import { resend } from "@/lib/resend";
 
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { z } from "zod";
 
-export async function forgotPassword(
-  email: string
-) {
+const emailSchema = z.string().email();
+
+export async function forgotPassword(email: string) {
   try {
+    const parsed = emailSchema.parse(email);
     const rateLimit = enforceRateLimit(
-      `forgot-password:${email}`,
+      `forgot-password:${parsed}`,
       {
         limit: 3,
         windowMs: 60 * 60 * 1000,
@@ -28,12 +30,11 @@ export async function forgotPassword(
       };
     }
 
-    const user =
-      await prisma.user.findUnique({
-        where: {
-          email,
-        },
-      });
+    const user = await prisma.user.findUnique({
+      where: {
+        email: parsed,
+      },
+    });
 
     /*
       Never reveal
@@ -53,21 +54,17 @@ export async function forgotPassword(
 
     await prisma.verificationToken.deleteMany({
       where: {
-        identifier: email,
+        identifier: parsed,
       },
     });
 
     await prisma.verificationToken.create({
       data: {
-        identifier: email,
+        identifier: parsed,
 
         token,
 
-        expires:
-          addHours(
-            new Date(),
-            1
-          ),
+        expires: addHours(new Date(), 1),
       },
     });
 
@@ -77,7 +74,7 @@ export async function forgotPassword(
       from:
         "Surgical Loupe <onboarding@resend.dev>",
 
-      to: email,
+      to: parsed,
 
       subject:
         "Reset Your Password",

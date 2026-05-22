@@ -9,6 +9,8 @@ import {
   RegisterInput,
 } from "@/lib/validations/auth";
 
+import { enforceRateLimit } from "@/lib/rate-limit";
+
 export async function registerUser(
   values: RegisterInput
 ) {
@@ -25,6 +27,18 @@ export async function registerUser(
 
     const { name, email, password } =
       validatedFields.data;
+
+    const rate = enforceRateLimit(
+      `register:${email}`,
+      { limit: 3, windowMs: 60 * 60 * 1000 }
+    );
+
+    if (!rate.success) {
+      return {
+        success: false,
+        message: "Too many registration attempts. Try again later.",
+      };
+    }
 
     const existingUser =
       await prisma.user.findUnique({

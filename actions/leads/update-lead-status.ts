@@ -12,88 +12,62 @@ import {
   LeadStatus,
   UserRole,
 } from "@/lib/generated/prisma";
+import { z } from "zod";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
-interface Props {
-  leadId: string;
+const updateLeadStatusSchema = z.object({
+  leadId: z.string().min(1),
+  status: z.nativeEnum(LeadStatus),
+});
 
-  status: LeadStatus;
-}
-
-export async function updateLeadStatus({
-  leadId,
-  status,
-}: Props) {
+export async function updateLeadStatus(values: any) {
   try {
+    const parsed = updateLeadStatusSchema.parse(values);
+
     const session = await requireActionRole([
       UserRole.ADMIN,
       UserRole.DEALER,
     ]);
 
-    const lead = await prisma.lead.findUnique({
-      where: {
-        id: leadId,
-      },
-
-      include: {
-        dealer: true,
-      },
+    const rate = enforceRateLimit(`update-lead-status:${parsed.leadId}`, {
+      limit: 100,
+      windowMs: 60 * 60 * 1000,
     });
 
-    if (!lead) {
-      return {
-        success: false,
-        message: "Lead not found",
-      };
-    }
+    if (!rate.success) return { success: false };
+
+    const lead = await prisma.lead.findUnique({
+      where: { id: parsed.leadId },
+      include: { dealer: true },
+    });
+
+    if (!lead) return { success: false, message: "Lead not found" };
 
     if (
       session.user.role === UserRole.DEALER &&
       lead.dealer?.email !== session.user.email
     ) {
-      return {
-        success: false,
-        message: "Forbidden",
-      };
+      return { success: false, message: "Forbidden" };
     }
 
     await prisma.lead.update({
-      where: {
-        id: leadId,
-      },
-
-      data: {
-        status,
-      },
+      where: { id: parsed.leadId },
+      data: { status: parsed.status },
     });
 
     await logActivity({
-      action:
-        "LEAD_STATUS_UPDATED",
-
-      entityType:
-        "Lead",
-
-      entityId:
-        leadId,
-
-      description: `Lead status changed to ${status}`,
-
-      userEmail:
-        session?.user?.email ?? undefined,
+      action: "LEAD_STATUS_UPDATED",
+      entityType: "Lead",
+      entityId: parsed.leadId,
+      description: `Lead status changed to ${parsed.status}`,
+      userEmail: session?.user?.email ?? undefined,
     });
 
-    revalidatePath(
-      "/admin/leads"
-    );
+    revalidatePath("/admin/leads");
 
-    return {
-      success: true,
-    };
+    return { success: true };
   } catch (error) {
     console.log(error);
-
-    return {
-      success: false,
-    };
+    return { success: false };
   }
 }

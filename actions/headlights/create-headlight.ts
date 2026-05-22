@@ -1,6 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { requireActionRole } from "@/lib/authorization";
+import { UserRole } from "@/lib/generated/prisma";
 
 import { z } from "zod";
 
@@ -10,6 +12,7 @@ export async function createHeadlight(
   values: z.input<typeof headlightSchema>
 ) {
   try {
+    await requireActionRole([UserRole.ADMIN]);
     const validatedFields =
       headlightSchema.safeParse(values);
 

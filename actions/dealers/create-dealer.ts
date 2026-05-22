@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 import { addHours } from "date-fns";
 
 import { prisma } from "@/lib/prisma";
+import { requireActionRole } from "@/lib/authorization";
+import { UserRole } from "@/lib/generated/prisma";
 
 import { resend } from "@/lib/resend";
 
@@ -28,6 +30,7 @@ export async function createDealer(
   values: Props
 ) {
   try {
+    await requireActionRole([UserRole.ADMIN]);
     const rateLimit = enforceRateLimit(
       `create-dealer:${values.email}`,
       {

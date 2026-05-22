@@ -1,6 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { requireActionRole } from "@/lib/authorization";
+import { UserRole } from "@/lib/generated/prisma";
 import { z } from "zod";
 import {frameSchema} from "@/lib/validations/frame";
 
@@ -9,6 +11,7 @@ export async function updateFrame(
   values: z.input<typeof frameSchema>
 ) {
   try {
+    await requireActionRole([UserRole.ADMIN]);
     const validatedFields =
       frameSchema.safeParse(values);
 

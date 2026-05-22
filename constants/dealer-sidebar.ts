@@ -1,7 +1,7 @@
 import {
   BarChart3,
   Gauge,
-  UserRound,
+  Settings2,
   Workflow,
 } from "lucide-react";
 
@@ -27,6 +27,6 @@ export const dealerSidebarItems = [
   {
     label: "Profile",
     href: "/dealer/profile",
-    icon: UserRound,
+    icon: Settings2,
   },
 ];
