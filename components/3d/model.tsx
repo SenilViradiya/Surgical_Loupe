@@ -1,9 +1,11 @@
 "use client";
 
 import {
+  Clone,
   useGLTF,
 } from "@react-three/drei";
-import {useEffect} from "react";
+import { useEffect } from "react";
+import { Mesh, Object3D } from "three";
 
 interface Props {
   url: string;
@@ -31,18 +33,18 @@ export function Model({
 }: Props) {
   const { scene } =
     useGLTF(url);
-    useEffect(() => {
-      scene.traverse((child: any) => {
-        if (child.isMesh) {
-          child.castShadow = true;
 
-          child.receiveShadow = true;
-        }
-      });
-    }, [scene]);
+  useEffect(() => {
+    scene.traverse((child: Object3D) => {
+      if (child instanceof Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
 
   return (
-    <primitive
+    <Clone
       object={scene}
       position={position}
       rotation={rotation}
@@ -50,4 +52,3 @@ export function Model({
     />
   );
 }
-useGLTF.preload("/sample.glb");
