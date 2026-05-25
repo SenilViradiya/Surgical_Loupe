@@ -141,14 +141,23 @@ export function LeadForm() {
       onSubmit={
         handleSubmit
       }
-      className="space-y-4 rounded-2xl border bg-white p-6"
+      className="space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/85 p-6 shadow-sm backdrop-blur"
     >
-      <h2 className="text-xl font-semibold">
+      <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+        Request quote
+      </p>
+
+      <h2 className="font-heading text-2xl text-slate-950">
         Request Quote
       </h2>
 
+      <p className="text-sm leading-6 text-slate-600">
+        Leave your details and we will prepare a tailored response based on the exact configuration you built.
+      </p>
+
       <Input
         placeholder="Full Name"
+        className="h-11 rounded-xl bg-slate-50/80"
         value={
           form.fullName
         }
@@ -165,6 +174,7 @@ export function LeadForm() {
       <Input
         placeholder="Email"
         type="email"
+        className="h-11 rounded-xl bg-slate-50/80"
         value={form.email}
         onChange={(e) =>
           setForm({
@@ -178,6 +188,7 @@ export function LeadForm() {
 
       <Input
         placeholder="Phone"
+        className="h-11 rounded-xl bg-slate-50/80"
         value={form.phone}
         onChange={(e) =>
           setForm({
@@ -191,6 +202,7 @@ export function LeadForm() {
 
       <Input
         placeholder="City"
+        className="h-11 rounded-xl bg-slate-50/80"
         value={form.city}
         onChange={(e) =>
           setForm({
@@ -204,6 +216,7 @@ export function LeadForm() {
 
       <Input
         placeholder="State"
+        className="h-11 rounded-xl bg-slate-50/80"
         value={form.state}
         onChange={(e) =>
           setForm({
@@ -217,6 +230,7 @@ export function LeadForm() {
 
       <Input
         placeholder="Pincode"
+        className="h-11 rounded-xl bg-slate-50/80"
         value={form.pincode}
         onChange={(e) =>
           setForm({
@@ -231,7 +245,7 @@ export function LeadForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full"
+        className="h-11 w-full rounded-full"
       >
         {loading
           ? "Submitting..."

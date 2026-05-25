@@ -47,48 +47,69 @@ export function ConfiguratorScene({
   }, [frame, initialFrame, setFrame]);
 
   return (
-    <div className="h-[600px] w-full rounded-2xl border bg-black">
+    <div className="relative h-160 w-full overflow-hidden rounded-[2rem] border border-border/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),rgba(255,255,255,0.04)_35%,rgba(12,15,18,0.96)_100%)] shadow-[0_30px_80px_-28px_rgba(15,23,42,0.55)]">
+      <div className="absolute left-6 top-6 z-10 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs tracking-[0.24em] text-white/70 uppercase backdrop-blur">
+        Live 3D preview
+      </div>
+
+      <div className="absolute bottom-6 left-6 z-10 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-xs text-white/70 backdrop-blur">
+        Rotate to inspect the fit. The selected frame, lens, and headlight update in real time.
+      </div>
+
       <Canvas
         shadows
+        gl={{ antialias: true, alpha: true }}
         camera={{
-          position: [0, 1, 7],
+          position: [0, 1.2, 7.5],
         }}
+        className="absolute inset-0"
       >
-        <ambientLight intensity={1.5} />
+        <color attach="background" args={["#0c1116"]} />
+        <fog attach="fog" args={["#0c1116", 10, 24]} />
+
+        <ambientLight intensity={1.8} />
 
         <directionalLight
-          position={[5, 5, 5]}
-          intensity={2}
+          position={[6, 8, 6]}
+          intensity={2.4}
           castShadow
         />
         <pointLight
-          position={[-2, 2, 2]}
+          position={[-4, 3, 3]}
+          intensity={1.6}
+        />
+        <spotLight
+          position={[0, 8, 8]}
+          angle={0.45}
+          penumbra={0.6}
           intensity={2}
         />
 
         <Suspense fallback={<CanvasLoader />}>
           {frame && (
             <Model
+              key={frame.modelUrl}
               url={frame.modelUrl}
-              scale={1.2}
-              position={[0, -1, 0]}
+              scale={1.15}
+              position={[0, -1.05, 0]}
             />
           )}
 
           {lens && (
             <Model
+              key={lens.modelUrl}
               url={lens.modelUrl}
               scale={0.6}
-              position={[0, 0.2, 0.3]}
+              position={[0, 0.05, 0.38]}
             />
           )}
 
           {headlight && (
             <Model
-              url={
-                headlight.modelUrl}
-                 scale={0.4}
-                 position={[0, 0.5, 0.8]}
+              key={headlight.modelUrl}
+              url={headlight.modelUrl}
+              scale={0.42}
+              position={[0, 0.55, 0.88]}
             />
           )}
           <mesh
@@ -105,7 +126,9 @@ export function ConfiguratorScene({
             />
 
             <meshStandardMaterial
-              color="#222"
+              color="#111820"
+              roughness={0.95}
+              metalness={0.05}
             />
           </mesh>
 
@@ -113,13 +136,11 @@ export function ConfiguratorScene({
         </Suspense>
 
         <OrbitControls
-        enablePan={false}
-        minDistance={3}
-        maxDistance={10}
-        maxPolarAngle={
-          Math.PI / 2
-        }
-         />
+          enablePan={false}
+          minDistance={3}
+          maxDistance={11}
+          maxPolarAngle={Math.PI / 2}
+        />
       </Canvas>
     </div>
   );
