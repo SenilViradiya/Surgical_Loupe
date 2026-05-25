@@ -47,12 +47,12 @@ export function ConfiguratorScene({
   }, [frame, initialFrame, setFrame]);
 
   return (
-    <div className="relative h-160 w-full overflow-hidden rounded-[2rem] border border-border/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),rgba(255,255,255,0.04)_35%,rgba(12,15,18,0.96)_100%)] shadow-[0_30px_80px_-28px_rgba(15,23,42,0.55)]">
-      <div className="absolute left-6 top-6 z-10 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs tracking-[0.24em] text-white/70 uppercase backdrop-blur">
+    <div className="relative h-96 w-full overflow-hidden rounded-2xl border border-border/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),rgba(255,255,255,0.04)_35%,rgba(12,15,18,0.96)_100%)] shadow-[0_30px_80px_-28px_rgba(15,23,42,0.55)] sm:h-112 lg:h-160 sm:rounded-[2rem]">
+      <div className="absolute left-3 top-3 z-10 rounded-full border border-white/10 bg-black/35 px-2.5 py-1 text-[10px] tracking-[0.22em] text-white/70 uppercase backdrop-blur sm:left-6 sm:top-6 sm:px-3 sm:text-xs sm:tracking-[0.24em]">
         Live 3D preview
       </div>
 
-      <div className="absolute bottom-6 left-6 z-10 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-xs text-white/70 backdrop-blur">
+      <div className="absolute bottom-3 left-3 z-10 max-w-48 rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-[11px] leading-4 text-white/70 backdrop-blur sm:bottom-6 sm:left-6 sm:max-w-none sm:px-4 sm:py-3 sm:text-xs">
         Rotate to inspect the fit. The selected frame, lens, and headlight update in real time.
       </div>
 
@@ -60,7 +60,7 @@ export function ConfiguratorScene({
         shadows
         gl={{ antialias: true, alpha: true }}
         camera={{
-          position: [0, 1.2, 7.5],
+          position: [0, 1.1, 7],
         }}
         className="absolute inset-0"
       >
