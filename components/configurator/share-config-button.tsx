@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button";
 
 interface Props {
   configurationId: string;
+  className?: string;
 }
 
 export function ShareConfigButton({
   configurationId,
+  className,
 }: Props) {
   const handleShare =
     async () => {
@@ -31,6 +33,7 @@ export function ShareConfigButton({
       onClick={
         handleShare
       }
+      className={className}
     >
       <Share2 className="mr-2 h-4 w-4" />
       Share Configuration

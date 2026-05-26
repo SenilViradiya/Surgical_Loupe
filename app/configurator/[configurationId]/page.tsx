@@ -31,44 +31,46 @@ export default async function SavedConfigurationPage({
   }
 
   return (
-    <div className="container mx-auto space-y-8 py-10">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-bold">
-            Saved Configuration
-          </h1>
+    <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f8fb_0%,#eef3f5_48%,#f8fafc_100%)]">
+      <div className="container mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+              Saved configuration
+            </p>
 
-          <p className="text-muted-foreground mt-2">
-            Review your saved setup
-          </p>
+            <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">
+            Saved Configuration
+            </h1>
+
+            <p className="text-sm text-slate-600 sm:text-base">
+              Review your saved setup
+            </p>
+          </div>
+
+          <ShareConfigButton
+            configurationId={
+              configuration.id
+            }
+            className="w-full sm:w-auto"
+          />
         </div>
 
-        <ShareConfigButton
-          configurationId={
-            configuration.id
-          }
-        />
-      </div>
-      <ShareConfigButton
-        configurationId={
-          configuration.id
-        }
-      />
-
-      <RestoreConfiguration
-        configuration={
-          configuration
-        }
-      />
-
-      <div className="grid gap-8 lg:grid-cols-2">
-        <ConfiguratorScene
-          initialFrame={
-            configuration.frame
+        <RestoreConfiguration
+          configuration={
+            configuration
           }
         />
 
-        <ConfigSummary />
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] xl:items-start">
+          <ConfiguratorScene
+            initialFrame={
+              configuration.frame
+            }
+          />
+
+          <ConfigSummary />
+        </div>
       </div>
     </div>
   );
