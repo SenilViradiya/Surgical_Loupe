@@ -28,7 +28,7 @@ export function ConfigSummary() {
   
 
   return (
-    <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-6 shadow-sm backdrop-blur">
+    <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6">
       <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
         Configuration summary
       </p>
@@ -38,26 +38,26 @@ export function ConfigSummary() {
       </h2>
 
       <div className="mt-5 space-y-3 rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
-        <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-3">
+        <div className="flex flex-col gap-1 border-b border-slate-200 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <span className="text-sm text-slate-500">Frame</span>
 
-          <span className="text-right text-sm font-medium text-slate-900">
+          <span className="text-sm font-medium text-slate-900 sm:text-right">
             {frame?.name ?? "Select a frame"}
           </span>
         </div>
 
-        <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-3">
+        <div className="flex flex-col gap-1 border-b border-slate-200 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <span className="text-sm text-slate-500">Lens</span>
 
-          <span className="text-right text-sm font-medium text-slate-900">
+          <span className="text-sm font-medium text-slate-900 sm:text-right">
             {lens?.name ?? "Select a lens"}
           </span>
         </div>
 
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <span className="text-sm text-slate-500">Headlight</span>
 
-          <span className="text-right text-sm font-medium text-slate-900">
+          <span className="text-sm font-medium text-slate-900 sm:text-right">
             {headlight?.name ?? "Optional"}
           </span>
         </div>
@@ -75,7 +75,7 @@ export function ConfigSummary() {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-end space-x-2">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
         {/* Use sonner toast for feedback and disable when required selections missing */}
         <SaveDraftButton frame={frame} lens={lens} headlight={headlight} />
       </div>

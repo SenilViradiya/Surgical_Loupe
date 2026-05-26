@@ -141,7 +141,7 @@ export function LeadForm() {
       onSubmit={
         handleSubmit
       }
-      className="space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/85 p-6 shadow-sm backdrop-blur"
+      className="space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6"
     >
       <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
         Request quote
@@ -155,92 +155,94 @@ export function LeadForm() {
         Leave your details and we will prepare a tailored response based on the exact configuration you built.
       </p>
 
-      <Input
-        placeholder="Full Name"
-        className="h-11 rounded-xl bg-slate-50/80"
-        value={
-          form.fullName
-        }
-        onChange={(e) =>
-          setForm({
-            ...form,
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input
+          placeholder="Full Name"
+          className="h-11 rounded-xl bg-slate-50/80 sm:col-span-2"
+          value={
+            form.fullName
+          }
+          onChange={(e) =>
+            setForm({
+              ...form,
 
-            fullName:
-              e.target.value,
-          })
-        }
-      />
+              fullName:
+                e.target.value,
+            })
+          }
+        />
 
-      <Input
-        placeholder="Email"
-        type="email"
-        className="h-11 rounded-xl bg-slate-50/80"
-        value={form.email}
-        onChange={(e) =>
-          setForm({
-            ...form,
+        <Input
+          placeholder="Email"
+          type="email"
+          className="h-11 rounded-xl bg-slate-50/80 sm:col-span-2"
+          value={form.email}
+          onChange={(e) =>
+            setForm({
+              ...form,
 
-            email:
-              e.target.value,
-          })
-        }
-      />
+              email:
+                e.target.value,
+            })
+          }
+        />
 
-      <Input
-        placeholder="Phone"
-        className="h-11 rounded-xl bg-slate-50/80"
-        value={form.phone}
-        onChange={(e) =>
-          setForm({
-            ...form,
+        <Input
+          placeholder="Phone"
+          className="h-11 rounded-xl bg-slate-50/80"
+          value={form.phone}
+          onChange={(e) =>
+            setForm({
+              ...form,
 
-            phone:
-              e.target.value,
-          })
-        }
-      />
+              phone:
+                e.target.value,
+            })
+          }
+        />
 
-      <Input
-        placeholder="City"
-        className="h-11 rounded-xl bg-slate-50/80"
-        value={form.city}
-        onChange={(e) =>
-          setForm({
-            ...form,
+        <Input
+          placeholder="City"
+          className="h-11 rounded-xl bg-slate-50/80"
+          value={form.city}
+          onChange={(e) =>
+            setForm({
+              ...form,
 
-            city:
-              e.target.value,
-          })
-        }
-      />
+              city:
+                e.target.value,
+            })
+          }
+        />
 
-      <Input
-        placeholder="State"
-        className="h-11 rounded-xl bg-slate-50/80"
-        value={form.state}
-        onChange={(e) =>
-          setForm({
-            ...form,
+        <Input
+          placeholder="State"
+          className="h-11 rounded-xl bg-slate-50/80"
+          value={form.state}
+          onChange={(e) =>
+            setForm({
+              ...form,
 
-            state:
-              e.target.value,
-          })
-        }
-      />
+              state:
+                e.target.value,
+            })
+          }
+        />
 
-      <Input
-        placeholder="Pincode"
-        className="h-11 rounded-xl bg-slate-50/80"
-        value={form.pincode}
-        onChange={(e) =>
-          setForm({
-            ...form,
+        <Input
+          placeholder="Pincode"
+          className="h-11 rounded-xl bg-slate-50/80"
+          value={form.pincode}
+          onChange={(e) =>
+            setForm({
+              ...form,
 
-            pincode:
-              e.target.value,
-          })
-        }
-      />
+              pincode:
+                e.target.value,
+            })
+          }
+        />
+      </div>
 
       <Button
         type="submit"

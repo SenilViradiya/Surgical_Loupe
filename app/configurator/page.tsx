@@ -46,8 +46,8 @@ export default async function ConfiguratorPage() {
     <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f8fb_0%,#eef3f5_48%,#f8fafc_100%)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-128 bg-[radial-gradient(circle_at_top_left,rgba(67,90,111,0.18),transparent_40%),radial-gradient(circle_at_top_right,rgba(108,122,137,0.16),transparent_34%)]" />
 
-      <div className="container relative mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12">
-        <section className="space-y-8">
+      <div className="container relative mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
+        <section className="space-y-6 sm:space-y-8">
           <div className="space-y-4">
             <p className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/80 px-4 py-1 text-xs font-medium tracking-[0.24em] text-slate-600 uppercase shadow-sm backdrop-blur">
               Precision configurator
@@ -62,7 +62,7 @@ export default async function ConfiguratorPage() {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {heroHighlights.map((item) => (
               <div
                 key={item.label}
@@ -79,51 +79,29 @@ export default async function ConfiguratorPage() {
             ))}
           </div>
 
-          <div className="grid gap-8 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] xl:items-start">
-            <div className="space-y-6 xl:sticky xl:top-6">
-              <div className="rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur">
-                <div className="mb-4 flex items-center justify-between gap-4 px-2 pt-1">
-                  <div>
-                    <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                      Live preview
-                    </p>
+          <div className="space-y-6 sm:space-y-8">
+            <div className="rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur sm:p-5">
+              <div className="mb-4 flex flex-col gap-4 px-1 pt-1 sm:flex-row sm:items-center sm:justify-between sm:px-2">
+                <div>
+                  <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+                    Live preview
+                  </p>
 
-                    <h2 className="mt-2 font-heading text-2xl text-slate-950">
-                      Main configuration
-                    </h2>
-                  </div>
-
-                  <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
-                    3D canvas
-                  </div>
+                  <h2 className="mt-2 font-heading text-2xl text-slate-950">
+                    Main configuration
+                  </h2>
                 </div>
 
-                <ConfiguratorScene initialFrame={undefined} />
-              </div>
-
-              <ConfigSummary />
-
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-6 shadow-sm backdrop-blur">
-                <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                  What happens next
-                </p>
-
-                <div className="mt-4 space-y-4 text-sm leading-6 text-slate-600">
-                  <p>
-                    Share your contact details and our team can review the selected configuration, confirm compatibility, and prepare the next recommendation.
-                  </p>
-
-                  <p>
-                    The quote request keeps the experience focused on the customer journey, with enough context to feel reassuring without becoming cluttered.
-                  </p>
+                <div className="self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+                  3D canvas
                 </div>
               </div>
 
-              <LeadForm />
+              <ConfiguratorScene initialFrame={undefined} />
             </div>
 
-            <div className="space-y-6">
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-5 shadow-sm backdrop-blur">
+            <div className="grid gap-6 lg:grid-cols-3">
+              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
                 <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
                   Step 1
                 </p>
@@ -132,7 +110,7 @@ export default async function ConfiguratorPage() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-5 shadow-sm backdrop-blur">
+              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
                 <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
                   Step 2
                 </p>
@@ -141,7 +119,7 @@ export default async function ConfiguratorPage() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-5 shadow-sm backdrop-blur">
+              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
                 <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
                   Step 3
                 </p>
@@ -149,6 +127,30 @@ export default async function ConfiguratorPage() {
                   <HeadlightSelector headlights={headlights} />
                 </div>
               </div>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start">
+              <div className="space-y-6">
+                <ConfigSummary />
+
+                <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6">
+                  <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+                    What happens next
+                  </p>
+
+                  <div className="mt-4 space-y-4 text-sm leading-6 text-slate-600">
+                    <p>
+                      Share your contact details and our team can review the selected configuration, confirm compatibility, and prepare the next recommendation.
+                    </p>
+
+                    <p>
+                      The quote request keeps the experience focused on the customer journey, with enough context to feel reassuring without becoming cluttered.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <LeadForm />
             </div>
           </div>
         </section>
