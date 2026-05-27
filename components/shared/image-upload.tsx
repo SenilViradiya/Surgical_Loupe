@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { ImagePlus, Loader2, UploadCloud, X } from "lucide-react";
 
@@ -75,6 +76,20 @@ export function ImageUpload({
     file: File | undefined
   ) => {
     if (!file) return;
+
+    // Client-side validation
+    const allowed = ["image/png", "image/jpeg", "image/webp"];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowed.includes(file.type)) {
+      toast.error("Unsupported file type. Use PNG, JPEG or WEBP.");
+      return;
+    }
+
+    if (file.size > maxSize) {
+      toast.error("File too large. Max 5MB allowed.");
+      return;
+    }
 
     await startUpload([file]);
 

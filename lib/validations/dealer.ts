@@ -14,6 +14,7 @@ export const dealerProfileSchema = z.object({
   city: z.string().optional(),
 
   state: z.string().optional(),
+  photoUrl: z.string().optional(),
   
 });
 

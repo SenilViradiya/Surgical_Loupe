@@ -41,69 +41,32 @@ export async function resetPassword({
         },
       });
 
-    if (
-      !verificationToken
-    ) {
-      return {
-        success: false,
-
-        message:
-          "Invalid token",
-      };
+    if (!verificationToken) {
+      return { success: false, message: "Invalid or expired token" };
     }
 
-    if (
-      verificationToken.expires <
-      new Date()
-    ) {
-      return {
-        success: false,
-
-        message:
-          "Token expired",
-      };
+    // Check expiry
+    if (verificationToken.expires && verificationToken.expires < new Date()) {
+      return { success: false, message: "Token has expired" };
     }
 
-    const hashedPassword =
-      await bcrypt.hash(
-        password,
-        10
-      );
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.update({
-      where: {
-        email:
-          verificationToken.identifier,
-      },
-
-      data: {
-        password:
-          hashedPassword,
-      },
+      where: { email: verificationToken.identifier },
+      data: { password: hashedPassword },
     });
 
-    await prisma.verificationToken.delete({
-      where: {
-        token,
-      },
-    });
-
+    // Mark dealer as pending setup after password set; profile completion
+    // will transition the dealer to ACTIVE via updateDealerProfile
     await prisma.dealer.updateMany({
-      where: {
-        email:
-          verificationToken.identifier,
-      },
-
-      data: {
-        onboardingStatus: "ACTIVE",
-        isActive: true,
-        profileCompletedAt: new Date(),
-      },
+      where: { email: verificationToken.identifier },
+      data: { onboardingStatus: "PENDING_SETUP", isActive: true },
     });
 
-    return {
-      success: true,
-    };
+    await prisma.verificationToken.delete({ where: { token } });
+
+    return { success: true };
   } catch (error) {
     console.log(error);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -26,6 +26,33 @@ export default function ResetPasswordForm({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tokenStatus, setTokenStatus] = useState<"checking" | "valid" | "missing" | "invalid" | "expired">("checking");
+
+  // Validate token on mount
+  useEffect(() => {
+    if (!token) {
+      setTokenStatus("missing");
+      return;
+    }
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/validate-token?token=${encodeURIComponent(token)}`);
+
+        if (res.status === 200) {
+          setTokenStatus("valid");
+        } else if (res.status === 410) {
+          setTokenStatus("expired");
+        } else if (res.status === 404) {
+          setTokenStatus("invalid");
+        } else {
+          setTokenStatus("invalid");
+        }
+      } catch (e) {
+        setTokenStatus("invalid");
+      }
+    })();
+  }, [token]);
 
   const heading =
     mode === "invite"
@@ -70,11 +97,42 @@ export default function ResetPasswordForm({
           : "Password updated"
       );
 
-      router.push("/login");
+      if (mode === "invite") {
+        // Send dealer to onboarding profile completion
+        router.push("/dealer/onboarding/profile");
+      } else {
+        router.push("/login");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  if (tokenStatus === "checking") {
+    return <div className="flex min-h-screen items-center justify-center">Checking token…</div>;
+  }
+
+  if (tokenStatus === "missing") {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="w-full max-w-md space-y-6 rounded-2xl border bg-white p-8 shadow-sm">
+          <h1 className="text-2xl font-bold">Missing token</h1>
+          <p className="text-muted-foreground">It looks like you opened this page without an invite link. If you were expecting an invitation, ask the administrator to resend it.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (tokenStatus === "invalid" || tokenStatus === "expired") {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="w-full max-w-md space-y-6 rounded-2xl border bg-white p-8 shadow-sm">
+          <h1 className="text-2xl font-bold">{tokenStatus === "expired" ? "Invite expired" : "Invalid token"}</h1>
+          <p className="text-muted-foreground">{tokenStatus === "expired" ? "This invitation link has expired." : "This link is invalid."} You can request a new invite from the administrator or contact support at <a href="mailto:hello@example.com" className="text-primary underline">hello@example.com</a>.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
