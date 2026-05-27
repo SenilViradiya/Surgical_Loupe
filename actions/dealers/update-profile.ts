@@ -42,6 +42,19 @@ export async function updateDealerProfile(values: any) {
     data: updateData,
   });
 
+  // If a profile image / photo URL was provided, persist it on the User record
+  if (parsed.photoUrl) {
+    try {
+      await prisma.user.update({
+        where: { email },
+        data: { image: parsed.photoUrl },
+      });
+    } catch (e) {
+      // don't fail the profile update if user image persist fails
+      console.log("Failed to persist user image", e);
+    }
+  }
+
   try {
     revalidatePath("/dealer");
   } catch (e) {

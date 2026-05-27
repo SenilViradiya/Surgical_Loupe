@@ -53,6 +53,25 @@ export default async function DealerPage() {
       }
       navbar={<Navbar />}
     >
+      {dealer.onboardingStatus === "PENDING_SETUP" ? (
+        <div className="mb-6 rounded-md border border-yellow-300 bg-yellow-50 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-yellow-800">Complete your dealer profile</p>
+              <p className="text-sm text-yellow-700">Your account is almost ready — finish setup to unlock the full dashboard.</p>
+            </div>
+
+            <div>
+              <a
+                href="/dealer/onboarding/profile"
+                className="inline-flex items-center rounded-md bg-yellow-600 px-3 py-2 text-sm font-semibold text-white hover:bg-yellow-700"
+              >
+                Complete profile
+              </a>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className="space-y-8">
         <div className="space-y-2">
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">
