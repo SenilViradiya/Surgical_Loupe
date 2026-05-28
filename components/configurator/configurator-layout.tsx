@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode } from "react";
-import { useEffect, useState } from "react";
 import { useConfiguratorStore } from "@/store/configurator-store";
 import { Button } from "@/components/ui/button";
 
