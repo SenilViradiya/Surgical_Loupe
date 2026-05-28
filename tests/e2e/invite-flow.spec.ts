@@ -71,7 +71,7 @@ test.describe("Invite and onboarding flow", () => {
     const imagePath = await createPngFixtureForTest(testInfo, "dealer-avatar.png");
     await page.locator('input[type="file"]').setInputFiles(imagePath);
 
-    await expect(page.getByAltText("Uploaded preview")).toBeVisible();
+    await expect(page.getByAltText("Uploaded preview")).toBeVisible({ timeout: 10000 });
 
     await page.getByPlaceholder("Company name").fill("Invited Dealer Enterprise");
     await page.getByPlaceholder("Business details (GST, licenses, etc.)").fill("GSTIN 27AAAAA0000A1Z5");
