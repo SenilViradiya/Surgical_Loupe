@@ -35,10 +35,10 @@ export function LeadsChart({
         </p>
       </div>
 
-      <div className="h-[350px]">
+      <div className="h-[350px] w-full min-w-0 overflow-hidden">
         <ResponsiveContainer
           width="100%"
-          height="100%"
+          height={350}
         >
           <LineChart
             data={data}
