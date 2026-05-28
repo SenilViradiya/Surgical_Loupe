@@ -91,6 +91,26 @@ export function ImageUpload({
       return;
     }
 
+    if (typeof window !== "undefined" && window.localStorage.getItem("e2eLocalImagePreview") === "1") {
+      const previewDataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          resolve(String(reader.result));
+        };
+
+        reader.onerror = () => {
+          reject(reader.error);
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+      setPreview(previewDataUrl);
+      onChange(previewDataUrl);
+      return;
+    }
+
     await startUpload([file]);
 
     if (inputRef.current) {
@@ -108,7 +128,7 @@ export function ImageUpload({
   };
 
   return (
-    <Card className="border-dashed bg-gradient-to-br from-background to-muted/20">
+    <Card className="border-dashed bg-linear-to-br from-background to-muted/20">
       <CardHeader className="space-y-1 border-b">
         <CardTitle className="flex items-center gap-2 text-sm font-medium">
           <ImagePlus className="h-4 w-4 text-muted-foreground" />
@@ -126,14 +146,22 @@ export function ImageUpload({
             preview ? "items-start" : "items-center"
           )}
         >
-          <div className="relative flex min-h-[160px] items-center justify-center overflow-hidden rounded-lg border bg-muted/40">
+          <div className="relative flex min-h-40 items-center justify-center overflow-hidden rounded-lg border bg-muted/40">
             {preview ? (
-              <Image
-                src={preview}
-                alt="Uploaded preview"
-                fill
-                className="object-cover"
-              />
+              preview.startsWith("data:") || preview.startsWith("blob:") ? (
+                <img
+                  src={preview}
+                  alt="Uploaded preview"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={preview}
+                  alt="Uploaded preview"
+                  fill
+                  className="object-cover"
+                />
+              )
             ) : (
               <div className="flex flex-col items-center gap-2 text-center text-sm text-muted-foreground">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-sm ring-1 ring-border">

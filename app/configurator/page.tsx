@@ -8,6 +8,11 @@ import { HeadlightSelector } from "@/components/configurator/headlight-selector"
 import { ConfigSummary } from "@/components/configurator/config-summary";
 import { LeadForm } from "@/components/configurator/lead-form";
 
+import ConfiguratorLayout from "@/components/configurator/configurator-layout";
+import ConfiguratorStepper from "@/components/configurator/configurator-stepper";
+import StickySummary from "@/components/configurator/sticky-summary";
+import ViewerToolbar from "@/components/configurator/viewer-toolbar";
+
 export default async function ConfiguratorPage() {
   const [frames, lenses, headlights] = await Promise.all([
     prisma.frame.findMany({
@@ -79,60 +84,68 @@ export default async function ConfiguratorPage() {
             ))}
           </div>
 
-          <div className="space-y-6 sm:space-y-8">
-            <div className="rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur sm:p-5">
-              <div className="mb-4 flex flex-col gap-4 px-1 pt-1 sm:flex-row sm:items-center sm:justify-between sm:px-2">
-                <div>
-                  <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                    Live preview
-                  </p>
-
-                  <h2 className="mt-2 font-heading text-2xl text-slate-950">
-                    Main configuration
-                  </h2>
-                </div>
-
-                <div className="self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
-                  3D canvas
-                </div>
-              </div>
-
-              <ConfiguratorScene initialFrame={undefined} />
-            </div>
-
-            <div className="grid gap-6 lg:grid-cols-3">
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
-                <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                  Step 1
-                </p>
-                <div className="mt-4">
-                  <FrameSelector frames={frames} />
-                </div>
-              </div>
-
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
-                <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                  Step 2
-                </p>
-                <div className="mt-4">
-                  <LensSelector lenses={lenses} />
-                </div>
-              </div>
-
-              <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
-                <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                  Step 3
-                </p>
-                <div className="mt-4">
-                  <HeadlightSelector headlights={headlights} />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start">
-              <div className="space-y-6">
+          <ConfiguratorLayout
+            aside={
+              <StickySummary>
                 <ConfigSummary />
+              </StickySummary>
+            }
+          >
+            <div className="space-y-6 sm:space-y-8">
+              <div className="rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur sm:p-5 relative">
+                <ViewerToolbar />
 
+                <div className="mb-4 flex flex-col gap-4 px-1 pt-1 sm:flex-row sm:items-center sm:justify-between sm:px-2">
+                  <div>
+                    <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+                      Live preview
+                    </p>
+
+                    <h2 className="mt-2 font-heading text-2xl text-slate-950">
+                      Main configuration
+                    </h2>
+                  </div>
+
+                  <div className="self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+                    3D canvas
+                  </div>
+                </div>
+
+                <ConfiguratorScene initialFrame={undefined} />
+              </div>
+
+              <ConfiguratorStepper current={0} />
+
+              <div className="grid gap-6 lg:grid-cols-3">
+                <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
+                  <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+                    Step 1
+                  </p>
+                  <div className="mt-4">
+                    <FrameSelector frames={frames} />
+                  </div>
+                </div>
+
+                <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
+                  <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+                    Step 2
+                  </p>
+                  <div className="mt-4">
+                    <LensSelector lenses={lenses} />
+                  </div>
+                </div>
+
+                <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
+                  <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+                    Step 3
+                  </p>
+                  <div className="mt-4">
+                    <HeadlightSelector headlights={headlights} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
                 <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6">
                   <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
                     What happens next
@@ -148,11 +161,11 @@ export default async function ConfiguratorPage() {
                     </p>
                   </div>
                 </div>
-              </div>
 
-              <LeadForm />
+                <LeadForm />
+              </div>
             </div>
-          </div>
+          </ConfiguratorLayout>
         </section>
       </div>
     </div>

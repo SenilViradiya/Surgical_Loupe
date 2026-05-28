@@ -9,6 +9,9 @@ import { ConfigSummary } from "@/components/configurator/config-summary";
 import { RestoreConfiguration } from "@/components/configurator/restore-configuration";
 import { ShareConfigButton } from "@/components/configurator/share-config-button";
 
+import ConfiguratorLayout from "@/components/configurator/configurator-layout";
+import StickySummary from "@/components/configurator/sticky-summary";
+
 interface Props {
   params: Promise<{
     configurationId: string;
@@ -62,15 +65,11 @@ export default async function SavedConfigurationPage({
           }
         />
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] xl:items-start">
-          <ConfiguratorScene
-            initialFrame={
-              configuration.frame
-            }
-          />
-
-          <ConfigSummary />
-        </div>
+        <ConfiguratorLayout
+          aside={<StickySummary><ConfigSummary /></StickySummary>}
+        >
+          <ConfiguratorScene initialFrame={configuration.frame} />
+        </ConfiguratorLayout>
       </div>
     </div>
   );
