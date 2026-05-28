@@ -88,7 +88,7 @@ export default async function LeadDetailsPage({
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border bg-white p-6">
             <h2 className="mb-4 text-xl font-semibold">
               Customer Info

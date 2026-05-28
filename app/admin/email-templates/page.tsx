@@ -10,7 +10,7 @@ export default function EmailTemplatesPage() {
 
       <p className="text-muted-foreground mt-2">Preview, edit and send test emails</p>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-2">
         <div>
           <h3 className="mb-2 text-lg font-semibold">Lead Created</h3>
           <EmailEditor templateId="lead-created" />
