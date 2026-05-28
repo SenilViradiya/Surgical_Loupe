@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
+import { signIn } from "next-auth/react";
+
 import { toast } from "sonner";
 
 import { resetPassword } from "@/actions/auth/reset-password";
@@ -98,7 +100,20 @@ export default function ResetPasswordForm({
       );
 
       if (mode === "invite") {
-        // Send dealer to onboarding profile completion
+        const loginResponse = await signIn(
+          "credentials",
+          {
+            email: response.email ?? "",
+            password,
+            redirect: false,
+          }
+        );
+
+        if (loginResponse?.error) {
+          toast.error("Unable to sign in after activation");
+          return;
+        }
+
         router.push("/dealer/onboarding/profile");
       } else {
         router.push("/login");

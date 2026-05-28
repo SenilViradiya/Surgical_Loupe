@@ -66,7 +66,10 @@ export async function resetPassword({
 
     await prisma.verificationToken.delete({ where: { token } });
 
-    return { success: true };
+    return {
+      success: true,
+      email: verificationToken.identifier,
+    };
   } catch (error) {
     console.log(error);
 

@@ -24,6 +24,10 @@ const store =
 
 globalForRateLimit.rateLimitStore = store;
 
+export function resetRateLimits() {
+  store.clear();
+}
+
 export function enforceRateLimit(
   key: string,
   config: RateLimitConfig
