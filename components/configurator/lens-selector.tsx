@@ -29,7 +29,11 @@ export function LensSelector({
       title="Fine-tune the lens"
       description="Use the slider to compare magnification choices without forcing every option onto the screen at once."
     >
-      {lenses.map((lens) => {
+      {lenses.length === 0 ? (
+        <div className="w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4 text-sm text-slate-600">
+          No active lens options are available right now.
+        </div>
+      ) : lenses.map((lens) => {
         const isActive = selectedLens?.id === lens.id;
 
         return (

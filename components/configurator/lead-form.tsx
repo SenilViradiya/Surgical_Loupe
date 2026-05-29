@@ -142,7 +142,7 @@ export function LeadForm() {
       onSubmit={
         handleSubmit
       }
-      className="space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6"
+      className="space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/88 p-4 shadow-[0_16px_40px_-28px_rgba(15,23,42,0.28)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_22px_54px_-28px_rgba(15,23,42,0.32)] sm:p-6"
     >
       <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
         Request quote
@@ -159,7 +159,7 @@ export function LeadForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
           placeholder="Full Name"
-          className="h-11 rounded-xl bg-slate-50/80 sm:col-span-2"
+          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white sm:col-span-2"
           value={
             form.fullName
           }
@@ -176,7 +176,7 @@ export function LeadForm() {
         <Input
           placeholder="Email"
           type="email"
-          className="h-11 rounded-xl bg-slate-50/80 sm:col-span-2"
+          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white sm:col-span-2"
           value={form.email}
           onChange={(e) =>
             setForm({
@@ -190,7 +190,7 @@ export function LeadForm() {
 
         <Input
           placeholder="Phone"
-          className="h-11 rounded-xl bg-slate-50/80"
+          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
           value={form.phone}
           onChange={(e) =>
             setForm({
@@ -204,7 +204,7 @@ export function LeadForm() {
 
         <Input
           placeholder="City"
-          className="h-11 rounded-xl bg-slate-50/80"
+          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
           value={form.city}
           onChange={(e) =>
             setForm({
@@ -218,7 +218,7 @@ export function LeadForm() {
 
         <Input
           placeholder="State"
-          className="h-11 rounded-xl bg-slate-50/80"
+          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
           value={form.state}
           onChange={(e) =>
             setForm({
@@ -232,7 +232,7 @@ export function LeadForm() {
 
         <Input
           placeholder="Pincode"
-          className="h-11 rounded-xl bg-slate-50/80"
+          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
           value={form.pincode}
           onChange={(e) =>
             setForm({
@@ -248,7 +248,7 @@ export function LeadForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="h-11 w-full rounded-full"
+        className="h-11 w-full rounded-full bg-slate-950 text-white shadow-[0_12px_28px_-16px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-18px_rgba(15,23,42,0.68)] active:translate-y-0"
       >
         {loading
           ? "Submitting..."

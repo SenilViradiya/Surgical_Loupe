@@ -38,6 +38,13 @@ export function ConfiguratorWorkspace({
     quote: null,
   });
   const [activeStep, setActiveStep] = useState(0);
+  const [revealedSteps, setRevealedSteps] = useState<Record<StepId, boolean>>({
+    frame: true,
+    lens: false,
+    headlight: false,
+    review: false,
+    quote: false,
+  });
 
   const steps = useMemo(
     () => [
@@ -63,7 +70,16 @@ export function ConfiguratorWorkspace({
 
         if (!visible?.target) return;
 
-        const index = STEP_IDS.findIndex((id) => id === visible.target.getAttribute("data-step-id"));
+        const stepId = visible.target.getAttribute("data-step-id") as StepId | null;
+
+        if (stepId) {
+          setRevealedSteps((current) => ({
+            ...current,
+            [stepId]: true,
+          }));
+        }
+
+        const index = STEP_IDS.findIndex((id) => id === stepId);
 
         if (index >= 0) {
           setActiveStep(index);
@@ -82,12 +98,25 @@ export function ConfiguratorWorkspace({
 
   const scrollToStep = (index: number) => {
     const id = STEP_IDS[index];
-    const element = sectionRefs.current[id];
+
+    setRevealedSteps((current) => ({
+      ...current,
+      [id]: true,
+    }));
+
+    setActiveStep(index);
+
+    const element = sectionRefs.current[id] ?? document.getElementById(id);
 
     if (!element) return;
 
-    setActiveStep(index);
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    const stickyOffset = 132;
+    const targetTop = element.getBoundingClientRect().top + window.scrollY - stickyOffset;
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -99,7 +128,7 @@ export function ConfiguratorWorkspace({
       }
     >
       <div className="space-y-6 sm:space-y-8">
-        <div className="space-y-4">
+        <div className="space-y-4 animate-[fadeInUp_600ms_ease-out]">
           <p className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/80 px-4 py-1 text-xs font-medium tracking-[0.24em] text-slate-600 uppercase shadow-sm backdrop-blur">
             Precision configurator
           </p>
@@ -138,8 +167,8 @@ export function ConfiguratorWorkspace({
           </div>
         </div>
 
-        <section id="preview" className="space-y-4 scroll-mt-28">
-          <div className="rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur sm:p-5 relative">
+        <section id="preview" className="space-y-4 scroll-mt-28 animate-[fadeInUp_700ms_ease-out]">
+          <div className="relative rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_32px_80px_-34px_rgba(15,23,42,0.4)] sm:p-5">
             <div className="mb-4 flex flex-col gap-4 px-1 pt-1 sm:flex-row sm:items-center sm:justify-between sm:px-2">
               <div>
                 <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Live preview</p>
@@ -163,7 +192,10 @@ export function ConfiguratorWorkspace({
             sectionRefs.current.frame = node;
           }}
           data-step-id="frame"
-          className="scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5 transition-shadow duration-300"
+          className={
+            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
+            (revealedSteps.frame ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
+          }
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 1</p>
           <div className="mt-4">
@@ -177,7 +209,10 @@ export function ConfiguratorWorkspace({
             sectionRefs.current.lens = node;
           }}
           data-step-id="lens"
-          className="scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5 transition-shadow duration-300"
+          className={
+            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
+            (revealedSteps.lens ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
+          }
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 2</p>
           <div className="mt-4">
@@ -191,7 +226,10 @@ export function ConfiguratorWorkspace({
             sectionRefs.current.headlight = node;
           }}
           data-step-id="headlight"
-          className="scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5 transition-shadow duration-300"
+          className={
+            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
+            (revealedSteps.headlight ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
+          }
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 3</p>
           <div className="mt-4">
@@ -205,7 +243,10 @@ export function ConfiguratorWorkspace({
             sectionRefs.current.review = node;
           }}
           data-step-id="review"
-          className="scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6 transition-shadow duration-300"
+          className={
+            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-6 " +
+            (revealedSteps.review ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
+          }
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 4</p>
           <h2 className="mt-2 font-heading text-2xl text-slate-950">Review configuration</h2>
@@ -227,7 +268,10 @@ export function ConfiguratorWorkspace({
             sectionRefs.current.quote = node;
           }}
           data-step-id="quote"
-          className="scroll-mt-32"
+          className={
+            "scroll-mt-32 transition-all duration-500 " +
+            (revealedSteps.quote ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
+          }
         >
           <div className="transition-shadow duration-300">
             <LeadForm />

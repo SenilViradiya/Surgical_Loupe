@@ -29,7 +29,11 @@ export function HeadlightSelector({
       title="Add the headlight"
       description="Scroll through compact lighting options and keep the page balanced while you compare the best fit."
     >
-      {headlights.map((headlight) => {
+      {headlights.length === 0 ? (
+        <div className="w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4 text-sm text-slate-600">
+          No active headlight options are available right now.
+        </div>
+      ) : headlights.map((headlight) => {
         const isActive = selectedHeadlight?.id === headlight.id;
 
         return (

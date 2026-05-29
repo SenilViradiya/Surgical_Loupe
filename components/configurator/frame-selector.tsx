@@ -29,7 +29,11 @@ export function FrameSelector({
       title="Choose the frame"
       description="Browse a compact slider of frame options and keep the current selection visible without filling the whole page."
     >
-      {frames.map((frame) => {
+      {frames.length === 0 ? (
+        <div className="w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4 text-sm text-slate-600">
+          No active frame options are available right now.
+        </div>
+      ) : frames.map((frame) => {
         const isActive = selectedFrame?.id === frame.id;
 
         return (
