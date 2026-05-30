@@ -1,25 +1,9 @@
-import { prisma } from "@/lib/prisma";
-
 import ConfiguratorWorkspace from "@/components/configurator/configurator-workspace";
+import { getConfiguratorCompatibilityCatalog } from "@/lib/compatibility/compatibility-service";
 
 export default async function ConfiguratorPage() {
-  const [frames, lenses, headlights] = await Promise.all([
-    prisma.frame.findMany({
-      where: {
-        status: "ACTIVE",
-      },
-    }),
-    prisma.lens.findMany({
-      where: {
-        status: "ACTIVE",
-      },
-    }),
-    prisma.headlight.findMany({
-      where: {
-        status: "ACTIVE",
-      },
-    }),
-  ]);
+  const { frames, lenses, headlights, snapshot, inventory } =
+    await getConfiguratorCompatibilityCatalog();
 
   return (
     <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f8fb_0%,#eef3f5_48%,#f8fafc_100%)]">
@@ -30,6 +14,8 @@ export default async function ConfiguratorPage() {
           frames={frames}
           lenses={lenses}
           headlights={headlights}
+          compatibility={snapshot}
+          inventory={inventory}
         />
       </div>
     </div>

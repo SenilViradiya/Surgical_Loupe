@@ -9,6 +9,7 @@ import {
   BarChart3,
   Boxes,
   CalendarDays,
+  GitBranch,
   Gauge,
   Settings2,
   ShieldAlert,
@@ -43,7 +44,7 @@ export function Sidebar({
   return (
     <aside className="w-72 shrink-0 border-r border-white/10 bg-slate-950 text-white">
       <div className="flex items-center gap-3 border-b px-6 py-5">
-        <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-400 shadow-lg shadow-cyan-500/20" />
+        <div className="h-10 w-10 rounded-2xl bg-linear-to-br from-cyan-400 to-fuchsia-400 shadow-lg shadow-cyan-500/20" />
         <div>
           <h2 className="text-sm font-semibold tracking-wide">
             {title}
@@ -66,6 +67,7 @@ export function Sidebar({
             BarChart3,
             Boxes,
             CalendarDays,
+            GitBranch,
             Gauge,
             Settings2,
             ShieldAlert,
@@ -83,7 +85,7 @@ export function Sidebar({
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition",
                 isActive
-                  ? "bg-gradient-to-r from-cyan-600 to-blue-500 text-white shadow-md"
+                  ? "bg-linear-to-r from-cyan-600 to-blue-500 text-white shadow-md"
                   : "text-white/85 hover:bg-white/5"
               )}
             >

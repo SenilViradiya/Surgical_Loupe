@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
-
 import { cn } from "@/lib/utils";
 
 import { Frame } from "@/lib/generated/prisma";
+import FallbackImage from "@/components/shared/fallback-image";
 
 import { useConfiguratorStore } from "@/store/configurator-store";
 
@@ -52,7 +51,9 @@ export function FrameSelector({
           >
             {frame.thumbnailUrl ? (
               <div className="relative h-20 w-full overflow-hidden sm:h-24">
-                <Image src={frame.thumbnailUrl} alt={frame.name} fill sizes="(max-width: 768px) 70vw, 16rem" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                <div className="absolute inset-0">
+                  <FallbackImage src={frame.thumbnailUrl} alt={frame.name} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-[1.03]" />
+                </div>
               </div>
             ) : (
               <div className="flex h-24 items-center justify-center bg-[linear-gradient(135deg,rgba(148,163,184,0.18),rgba(255,255,255,0.55))] text-sm text-slate-500 sm:h-28">

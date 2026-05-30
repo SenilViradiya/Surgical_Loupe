@@ -1,28 +1,87 @@
 "use client";
 
-import Image from "next/image";
+import FallbackImage from "@/components/shared/fallback-image";
 
 import { Headlight } from "@/lib/generated/prisma";
 
 import { cn } from "@/lib/utils";
 
 import { useConfiguratorStore } from "@/store/configurator-store";
+import type { CompatibilitySnapshot } from "@/lib/compatibility/compatibility-types";
+import type { InventorySnapshot } from "@/lib/inventory/inventory-types";
 
 import { OptionSlider } from "./option-slider";
 import ProductOptionCard from "./product-option-card";
 
 interface Props {
   headlights: Headlight[];
+  compatibility: CompatibilitySnapshot;
+  inventory?: InventorySnapshot | null;
 }
 
 export function HeadlightSelector({
   headlights,
+  compatibility,
+  inventory = null,
 }: Props) {
   const {
+    frame: selectedFrame,
+    lens: selectedLens,
     headlight: selectedHeadlight,
     setHeadlight,
   } =
     useConfiguratorStore();
+
+  const frameRules = compatibility.frameHeadlight.filter(
+    (relation) => relation.sourceId === selectedFrame?.id
+  );
+
+  const lensRules = compatibility.lensHeadlight.filter(
+    (relation) => relation.sourceId === selectedLens?.id
+  );
+
+  const frameLocksHeadlight = frameRules.length > 0;
+  const lensLocksHeadlight = lensRules.length > 0;
+
+  const frameAllowedIds = new Map(frameRules.map((relation) => [relation.targetId, relation.reason ?? undefined]));
+  const lensAllowedIds = new Map(lensRules.map((relation) => [relation.targetId, relation.reason ?? undefined]));
+
+  const availabilityLookup = new Map<string, { available: number; status?: string }>();
+  if (inventory?.headlights) {
+    for (const item of inventory.headlights) {
+      availabilityLookup.set(item.productId, { available: item.available, status: item.status });
+    }
+  }
+
+  const isHeadlightCompatible = (headlightId: string) => {
+    const avail = availabilityLookup.get(headlightId);
+
+    if (avail && avail.available <= 0) return false;
+
+    if (!selectedFrame && !selectedLens) return true;
+
+    const frameCompatible = !frameLocksHeadlight || frameAllowedIds.has(headlightId);
+    const lensCompatible = !lensLocksHeadlight || lensAllowedIds.has(headlightId);
+    if (!(frameCompatible && lensCompatible)) return false;
+
+    return true;
+  };
+
+  const getHeadlightDisabledReason = (headlightId: string) => {
+    const avail = availabilityLookup.get(headlightId);
+
+    if (avail && avail.available <= 0) return "Out of stock";
+
+    if (frameLocksHeadlight && !frameAllowedIds.has(headlightId)) {
+      return "Not compatible with selected frame";
+    }
+
+    if (lensLocksHeadlight && !lensAllowedIds.has(headlightId)) {
+      return "Not compatible with selected lens";
+    }
+
+    return undefined;
+  };
 
   return (
     <OptionSlider
@@ -40,7 +99,10 @@ export function HeadlightSelector({
           <ProductOptionCard
             key={headlight.id}
             isActive={isActive}
+            disabled={!isHeadlightCompatible(headlight.id)}
+            disabledReason={getHeadlightDisabledReason(headlight.id)}
             onClick={() =>
+              isHeadlightCompatible(headlight.id) &&
               setHeadlight({
                 id: headlight.id,
                 name: headlight.name,
@@ -52,7 +114,9 @@ export function HeadlightSelector({
           >
             {headlight.thumbnailUrl ? (
               <div className="relative h-20 w-full overflow-hidden sm:h-24">
-                <Image src={headlight.thumbnailUrl} alt={headlight.name} fill sizes="(max-width: 768px) 70vw, 16rem" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                <div className="absolute inset-0">
+                  <FallbackImage src={headlight.thumbnailUrl} alt={headlight.name} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-[1.03]" />
+                </div>
               </div>
             ) : (
               <div className="flex h-24 items-center justify-center bg-[linear-gradient(135deg,rgba(148,163,184,0.18),rgba(255,255,255,0.55))] text-sm text-slate-500 sm:h-28">

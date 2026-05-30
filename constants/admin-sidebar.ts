@@ -7,6 +7,7 @@ export const adminSidebarItems = [
   { label: "Frames", href: "/admin/frames", icon: "Boxes" },
   { label: "Lenses", href: "/admin/lenses", icon: "Shapes" },
   { label: "Headlights", href: "/admin/headlights", icon: "BarChart3" },
+  { label: "Compatibility", href: "/admin/compatibility", icon: "GitBranch" },
   { label: "Analytics", href: "/admin/analytics", icon: "BarChart3" },
   { label: "Dealers", href: "/admin/dealers", icon: "Users" },
   { label: "Events", href: "/admin/events", icon: "CalendarDays" },

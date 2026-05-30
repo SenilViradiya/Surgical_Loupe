@@ -27,7 +27,12 @@ export async function createLead(values: any) {
       };
     }
 
-    const dealer = await assignDealer(parsed.pincode);
+    const dealer = await Promise.race([
+      assignDealer(parsed.pincode),
+      new Promise<null>((resolve) => {
+        setTimeout(() => resolve(null), 2000);
+      }),
+    ]).catch(() => null);
 
     const lead = await prisma.lead.create({
       data: {

@@ -2,12 +2,34 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { configurationSchema } from "@/lib/validations/configuration";
+import { validateConfiguration } from "@/lib/compatibility/compatibility-service";
+import { validateInventory } from "@/lib/inventory/inventory-service";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
     const parsed = configurationSchema.parse(body);
+
+    const compatibility = await validateConfiguration({
+      frameId: parsed.frameId,
+      lensId: parsed.lensId,
+      headlightId: parsed.headlightId ?? null,
+    });
+
+    if (!compatibility.success) {
+      return NextResponse.json(compatibility, { status: 400 });
+    }
+
+    const availability = await validateInventory({
+      frameId: parsed.frameId,
+      lensId: parsed.lensId,
+      headlightId: parsed.headlightId ?? null,
+    });
+
+    if (!availability.success) {
+      return NextResponse.json(availability, { status: 400 });
+    }
 
     const rateKey = `save-draft-configuration:${parsed.frameId}:${parsed.lensId}`;
 
@@ -37,6 +59,6 @@ export async function POST(req: Request) {
 
     const message = error?.message ?? "Failed to save draft";
 
-    return NextResponse.json({ success: false, message }, { status: 500 });
+    return NextResponse.json({ success: false, code: "INCOMPATIBLE_PRODUCTS", message }, { status: 500 });
   }
 }

@@ -37,32 +37,28 @@ export function ModelUpload({
   onChange,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [uploaded, setUploaded] = useState(!!value);
-  const [fileName, setFileName] = useState(
-    value ? getFileName(value) : ""
-  );
+  const [uploaded, setUploaded] = useState(Boolean(getSafeModelUrl(value)));
+  const [fileName, setFileName] = useState(value ? getFileName(value) : "");
+
+  const safeModelUrl = getSafeModelUrl(value);
 
   const { startUpload, isUploading } =
     useUploadThing(
       "modelUploader",
       {
-        onClientUploadComplete:
-          (res) => {
-            console.log(res);
+        onClientUploadComplete: (res) => {
+          console.log(res);
 
-            if (!res?.[0]) return;
+          if (!res?.[0]) return;
 
-            setUploaded(true);
-            setFileName(getFileName(res[0].name ?? res[0].url));
+          const uploadedUrl = getSafeModelUrl(res[0].url) ?? res[0].url;
 
-            onChange(
-              res[0].url
-            );
-          },
+          setUploaded(true);
+          setFileName(getFileName(res[0].name ?? res[0].url));
+          onChange(uploadedUrl);
+        },
 
-        onUploadError: (
-          error
-        ) => {
+        onUploadError: (error) => {
           console.log(error);
 
           alert(error.message);
@@ -71,7 +67,9 @@ export function ModelUpload({
     );
 
   useEffect(() => {
-    setUploaded(!!value);
+    const nextSafeUrl = getSafeModelUrl(value);
+
+    setUploaded(Boolean(nextSafeUrl));
     setFileName(value ? getFileName(value) : "");
   }, [value]);
 
@@ -98,7 +96,7 @@ export function ModelUpload({
   };
 
   return (
-    <Card className="border-dashed bg-gradient-to-br from-background to-muted/20">
+    <Card className="border-dashed bg-linear-to-br from-background to-muted/20">
       <CardHeader className="space-y-1 border-b">
         <CardTitle className="flex items-center gap-2 text-sm font-medium">
           <Box className="h-4 w-4 text-muted-foreground" />
@@ -116,8 +114,8 @@ export function ModelUpload({
             uploaded ? "items-start" : "items-center"
           )}
         >
-          <div className="relative min-h-[220px] overflow-hidden rounded-lg border bg-muted/40">
-            {value ? (
+          <div className="relative min-h-55 overflow-hidden rounded-lg border bg-muted/40">
+            {safeModelUrl ? (
               <Canvas
                 shadows
                 camera={{ position: [0, 0.8, 3.5] }}
@@ -126,22 +124,18 @@ export function ModelUpload({
                 <ambientLight intensity={1.6} />
                 <directionalLight position={[2, 4, 3]} intensity={2} castShadow />
                 <Suspense fallback={<CanvasLoader />}>
-                  <Model url={value} scale={1.5} position={[0, -0.7, 0]} />
+                  <Model url={safeModelUrl} scale={1.5} position={[0, -0.7, 0]} />
                   <Environment preset="city" />
                 </Suspense>
                 <OrbitControls enablePan={false} minDistance={2} maxDistance={6} />
               </Canvas>
             ) : (
-              <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-2 px-4 text-center text-sm text-muted-foreground">
+              <div className="flex h-full min-h-55 flex-col items-center justify-center gap-2 px-4 text-center text-sm text-muted-foreground">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-sm ring-1 ring-border">
                   <FileUp className="h-5 w-5" />
                 </div>
-                <p className="font-medium text-foreground">
-                  No model uploaded
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Select a .glb file to preview it here.
-                </p>
+                <p className="font-medium text-foreground">No model uploaded</p>
+                <p className="text-xs text-muted-foreground">Select a .glb file to preview it here.</p>
               </div>
             )}
           </div>
@@ -210,5 +204,20 @@ function getFileName(value: string) {
     return cleanValue.split("/").pop() ?? "Uploaded file";
   } catch {
     return "Uploaded file";
+  }
+}
+
+function getSafeModelUrl(url?: string) {
+  if (!url) return undefined;
+
+  if (url.startsWith("data:") || url.startsWith("blob:") || url.startsWith("/")) {
+    return url;
+  }
+
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? url : undefined;
+  } catch {
+    return undefined;
   }
 }
