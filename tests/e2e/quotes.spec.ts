@@ -1,8 +1,8 @@
+import { Page } from "@playwright/test";
 import { prisma } from "../../lib/prisma";
-
 import { expect, test } from "./fixtures";
 
-async function loginAsDealer(page: Parameters<typeof test>[0]["page"], email: string, password: string) {
+async function loginAsDealer(page: Page, email: string, password: string) {
   const csrfResponse = await page.request.get("/api/auth/csrf");
   const csrfBody = await csrfResponse.json();
 
