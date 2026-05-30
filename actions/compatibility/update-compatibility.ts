@@ -1,8 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/src/lib/notifications/notification-service";
 
 import { refreshCompatibilityCache } from "@/lib/compatibility/compatibility-service";
+import { NotificationType, UserRole } from "@/lib/generated/prisma";
 
 export async function updateCompatibility(values: {
   sourceType: "FRAME" | "LENS";
@@ -61,6 +63,25 @@ export async function updateCompatibility(values: {
     }
 
     await refreshCompatibilityCache();
+
+    await createNotification({
+      recipientRoles: [UserRole.ADMIN],
+      title: "Compatibility updated",
+      message: `Compatibility rules were updated for ${values.sourceType.toLowerCase()} ${values.sourceId}.`,
+      type: NotificationType.SYSTEM,
+      entityType: "Compatibility",
+      entityId: values.sourceId,
+      metadata: {
+        sourceType: values.sourceType,
+        sourceId: values.sourceId,
+        targetType: values.targetType,
+        targetIds: uniqueTargetIds,
+      },
+      eventKey: `COMPATIBILITY_UPDATED:${values.sourceType}:${values.sourceId}:${values.targetType}`,
+      deliveryChannels: ["IN_APP"],
+      ctaLabel: "Open compatibility",
+      ctaUrl: "/admin/compatibility",
+    }).catch((error) => console.error(error));
 
     return { success: true };
   } catch (error) {

@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { invalidateInventoryCache } from "./inventory-cache";
 import type { InventorySnapshot, InventoryRecord } from "./inventory-types";
+import { createNotification } from "@/src/lib/notifications/notification-service";
+import { NotificationType, UserRole } from "@/lib/generated/prisma";
 
 function mapFrameInventory(rows: any[]): InventoryRecord[] {
   return rows.map((r) => ({
@@ -39,6 +41,57 @@ function mapHeadlightInventory(rows: any[]): InventoryRecord[] {
     status: r.status,
     updatedAt: r.updatedAt.toISOString(),
   }));
+}
+
+async function emitInventoryThresholdNotification(product: { type: "FRAME" | "LENS" | "HEADLIGHT"; id: string }) {
+  const [frame, lens, headlight] = await Promise.all([
+    product.type === "FRAME" ? prisma.frame.findUnique({ where: { id: product.id }, select: { name: true } }) : Promise.resolve(null),
+    product.type === "LENS" ? prisma.lens.findUnique({ where: { id: product.id }, select: { name: true } }) : Promise.resolve(null),
+    product.type === "HEADLIGHT" ? prisma.headlight.findUnique({ where: { id: product.id }, select: { name: true } }) : Promise.resolve(null),
+  ]);
+
+  const name = frame?.name ?? lens?.name ?? headlight?.name ?? product.id;
+  const record =
+    product.type === "FRAME"
+      ? await prisma.frameInventory.findUnique({ where: { frameId: product.id } })
+      : product.type === "LENS"
+        ? await prisma.lensInventory.findUnique({ where: { lensId: product.id } })
+        : await prisma.headlightInventory.findUnique({ where: { headlightId: product.id } });
+
+  if (!record) {
+    return;
+  }
+
+  const available = Math.max(0, record.quantity - record.reserved);
+
+  if (available > record.lowStockThreshold) {
+    return;
+  }
+
+  const isOutOfStock = available <= 0;
+
+  await createNotification({
+    recipientRoles: [UserRole.ADMIN],
+    title: isOutOfStock ? "Inventory out of stock" : "Inventory low",
+    message: isOutOfStock
+      ? `${name} is out of stock.`
+      : `${name} is running low with ${available} units available.`,
+    type: NotificationType.INVENTORY,
+    entityType: product.type,
+    entityId: product.id,
+    metadata: {
+      productType: product.type,
+      productId: product.id,
+      productName: name,
+      available,
+      lowStockThreshold: record.lowStockThreshold,
+      status: record.status,
+    },
+    eventKey: `${isOutOfStock ? "INVENTORY_OUT_OF_STOCK" : "INVENTORY_LOW"}:${product.type}:${product.id}`,
+    deliveryChannels: ["IN_APP", "EMAIL"],
+    ctaLabel: "Open inventory",
+    ctaUrl: "/admin/inventory",
+  }).catch((error) => console.error(error));
 }
 
 export async function getInventorySnapshot(): Promise<InventorySnapshot> {
@@ -129,6 +182,11 @@ export async function reserveInventory(product: { type: "FRAME" | "LENS" | "HEAD
   });
 
   invalidateInventoryCache("inventory:snapshot:v1");
+
+  if (result.success) {
+    await emitInventoryThresholdNotification(product);
+  }
+
   return result;
 }
 
@@ -157,6 +215,11 @@ export async function releaseInventory(product: { type: "FRAME" | "LENS" | "HEAD
   });
 
   invalidateInventoryCache("inventory:snapshot:v1");
+
+  if (result.success) {
+    await emitInventoryThresholdNotification(product);
+  }
+
   return result;
 }
 
@@ -182,6 +245,7 @@ export async function updateInventory(product: { type: "FRAME" | "LENS" | "HEADL
     });
 
     invalidateInventoryCache("inventory:snapshot:v1");
+    await emitInventoryThresholdNotification(product);
     return result;
   }
 
@@ -206,6 +270,7 @@ export async function updateInventory(product: { type: "FRAME" | "LENS" | "HEADL
     });
 
     invalidateInventoryCache("inventory:snapshot:v1");
+    await emitInventoryThresholdNotification(product);
     return result;
   }
 
@@ -229,6 +294,7 @@ export async function updateInventory(product: { type: "FRAME" | "LENS" | "HEADL
   });
 
   invalidateInventoryCache("inventory:snapshot:v1");
+  await emitInventoryThresholdNotification(product);
   return result;
 }
 

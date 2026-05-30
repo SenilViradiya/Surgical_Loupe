@@ -3,12 +3,13 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/src/lib/notifications/notification-service";
 
 import { dealerProfileSchema } from "@/lib/validations/dealer";
 
 import { requireActionRole } from "@/lib/authorization";
 
-import { UserRole } from "@/lib/generated/prisma";
+import { NotificationType, UserRole } from "@/lib/generated/prisma";
 
 import { z } from "zod";
 
@@ -41,6 +42,34 @@ export async function updateDealerProfile(values: any) {
     where: { email },
     data: updateData,
   });
+
+  if (meaningful) {
+    const dealer = await prisma.dealer.findUnique({
+      where: { email },
+      select: { id: true, name: true, email: true },
+    });
+
+    if (dealer) {
+      await createNotification({
+        recipientEmails: [dealer.email],
+        recipientRoles: [UserRole.ADMIN],
+        title: "Dealer activated",
+        message: `${dealer.name} completed onboarding and is now active.`,
+        type: NotificationType.DEALER,
+        entityType: "Dealer",
+        entityId: dealer.id,
+        metadata: {
+          dealerId: dealer.id,
+          dealerName: dealer.name,
+          dealerEmail: dealer.email,
+        },
+        eventKey: `DEALER_ACTIVATED:${dealer.id}`,
+        deliveryChannels: ["IN_APP", "EMAIL"],
+        ctaLabel: "Open dealers",
+        ctaUrl: "/admin/dealers",
+      }).catch((error) => console.error(error));
+    }
+  }
 
   // If a profile image / photo URL was provided, persist it on the User record
   if (parsed.photoUrl) {

@@ -8,7 +8,8 @@ import { addHours } from "date-fns";
 
 import { prisma } from "@/lib/prisma";
 import { requireActionRole } from "@/lib/authorization";
-import { UserRole } from "@/lib/generated/prisma";
+import { NotificationType, UserRole } from "@/lib/generated/prisma";
+import { createNotification } from "@/src/lib/notifications/notification-service";
 
 import { resend } from "@/lib/resend";
 
@@ -160,6 +161,23 @@ export async function createDealer(
         </p>
       `,
     });
+
+    await createNotification({
+      recipientRoles: [UserRole.ADMIN],
+      title: "Dealer created",
+      message: `${values.name} (${values.email}) has been added to the dealer network.`,
+      type: NotificationType.DEALER,
+      entityType: "Dealer",
+      entityId: values.email,
+      metadata: {
+        dealerEmail: values.email,
+        dealerName: values.name,
+      },
+      eventKey: `DEALER_CREATED:${values.email}`,
+      deliveryChannels: ["IN_APP"],
+      ctaLabel: "Open dealers",
+      ctaUrl: "/admin/dealers",
+    }).catch((error) => console.error(error));
 
     revalidatePath(
       "/admin/dealers"

@@ -5,6 +5,7 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 
 import { logoutUser } from "@/actions/auth/logout";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export function Navbar() {
   const [isPending, startTransition] = useTransition();
@@ -33,6 +34,7 @@ export function Navbar() {
         />
 
         <div className="flex items-center gap-3">
+          <NotificationBell />
           <div className="h-9 w-9 rounded-full bg-slate-200" />
           <Button variant="ghost" onClick={handleLogout} disabled={isPending}>
             {isPending ? "Logging out..." : "Logout"}

@@ -5,10 +5,11 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 import { logActivity } from "@/lib/activity-logger";
+import { createNotification } from "@/src/lib/notifications/notification-service";
 
 import { requireActionRole } from "@/lib/authorization";
 
-import { UserRole } from "@/lib/generated/prisma";
+import { NotificationType, UserRole } from "@/lib/generated/prisma";
 import { z } from "zod";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
@@ -30,6 +31,13 @@ export async function reassignLead(values: any) {
 
     if (!rate.success) return { success: false };
 
+    const lead = await prisma.lead.findUnique({
+      where: { id: parsed.leadId },
+      include: { dealer: true },
+    });
+
+    if (!lead) return { success: false, message: "Lead not found" };
+
     const dealer = await prisma.dealer.findUnique({
       where: { id: parsed.dealerId },
     });
@@ -48,6 +56,38 @@ export async function reassignLead(values: any) {
       description: `Lead reassigned to ${dealer.name}`,
       userEmail: session?.user?.email ?? undefined,
     });
+
+    const notificationBase = {
+      title: "Lead reassigned",
+      message: `${lead.fullName} has been reassigned to ${dealer.name}.`,
+      type: NotificationType.LEAD,
+      entityType: "Lead",
+      entityId: parsed.leadId,
+      metadata: {
+        leadId: parsed.leadId,
+        dealerId: dealer.id,
+        previousDealerId: lead.dealerId,
+      },
+    };
+
+    await Promise.all([
+      createNotification({
+        ...notificationBase,
+        eventKey: `LEAD_REASSIGNED:${parsed.leadId}:dealer`,
+        recipientEmails: [dealer.email],
+        deliveryChannels: ["IN_APP", "EMAIL"],
+        ctaLabel: "View leads",
+        ctaUrl: "/dealer/quotes",
+      }),
+      createNotification({
+        ...notificationBase,
+        eventKey: `LEAD_REASSIGNED:${parsed.leadId}:admin`,
+        recipientRoles: [UserRole.ADMIN],
+        deliveryChannels: ["IN_APP"],
+        ctaLabel: "Open lead",
+        ctaUrl: `/admin/leads/${parsed.leadId}`,
+      }),
+    ]).catch((error) => console.error(error));
 
     revalidatePath(`/admin/leads/${parsed.leadId}`);
     revalidatePath("/admin/unassigned-leads");

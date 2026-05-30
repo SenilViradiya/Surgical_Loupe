@@ -32,6 +32,8 @@ model User {
   sessions Session[]
 
   accounts Account[]
+
+  notifications Notification[]
 }
 
 model Account {
@@ -98,10 +100,28 @@ enum LeadStatus {
   CLOSED
 }
 
+enum QuoteStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED
+}
+
 enum UserRole {
   ADMIN
   DEALER
   USER
+}
+
+enum NotificationType {
+  LEAD
+  QUOTE
+  INVENTORY
+  DEALER
+  SYSTEM
 }
 
 enum DealerOnboardingStatus {
@@ -282,6 +302,8 @@ model Dealer {
 
   leads Lead[]
 
+  quotes Quote[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -317,6 +339,40 @@ model Configuration {
   lead Lead?
 
   createdAt DateTime @default(now())
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  userId String
+
+  title String
+  message String
+
+  type NotificationType
+
+  isRead Boolean @default(false)
+
+  entityType String?
+  entityId String?
+
+  metadata Json?
+
+  deliveryChannel String @default("IN_APP")
+  deliveryStatus String @default("PENDING")
+
+  eventKey String @unique
+
+  readAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, isRead, createdAt])
+  @@index([userId, type, createdAt])
+  @@index([entityType, entityId])
 }
 
 model FrameLensCompatibility {
@@ -398,12 +454,125 @@ model Lead {
 
   configuration Configuration @relation(fields: [configurationId], references: [id])
 
+  quotes Quote[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([email])
   @@index([status])
   @@index([dealerId])
+}
+
+model Quote {
+  id String @id @default(cuid())
+
+  quoteNumber String @unique
+
+  leadId   String
+  dealerId String
+
+  status QuoteStatus @default(DRAFT)
+
+  subtotal Decimal @db.Decimal(12, 2)
+  discount Decimal @default(0) @db.Decimal(12, 2)
+  tax      Decimal @default(0) @db.Decimal(12, 2)
+  total    Decimal @db.Decimal(12, 2)
+
+  notes String?
+
+  expiresAt DateTime
+
+  sentAt      DateTime?
+  viewedAt    DateTime?
+  acceptedAt  DateTime?
+  rejectedAt  DateTime?
+  convertedAt DateTime?
+
+  customerToken          String   @unique
+  customerTokenExpiresAt DateTime
+
+  sentToEmail String
+  pdfUrl      String?
+
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  dealer Dealer @relation(fields: [dealerId], references: [id], onDelete: Restrict)
+
+  items         QuoteItem[]
+  history       QuoteHistory[]
+  notifications QuoteNotification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([dealerId, status])
+  @@index([status, expiresAt])
+  @@index([createdAt])
+}
+
+model QuoteItem {
+  id String @id @default(cuid())
+
+  quoteId String
+
+  productType String
+  productId   String
+  productName String
+
+  price     Decimal @db.Decimal(12, 2)
+  quantity  Int     @default(1)
+  sortOrder Int     @default(0)
+  metadata  Json?
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([quoteId])
+  @@index([productType, productId])
+}
+
+model QuoteHistory {
+  id String @id @default(cuid())
+
+  quoteId String
+
+  event      String
+  status     QuoteStatus?
+  comment    String?
+  actorType  String?
+  actorId    String?
+  actorEmail String?
+  metadata   Json?
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([quoteId, createdAt])
+  @@index([event])
+}
+
+model QuoteNotification {
+  id String @id @default(cuid())
+
+  quoteId String
+
+  event             String
+  channel           String
+  deliveryStatus    String
+  recipient         String?
+  providerMessageId String?
+  payload           Json?
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([quoteId, createdAt])
+  @@index([event, channel])
 }
 
 model Event {

@@ -2,7 +2,9 @@
 // will map these keys to actual Lucide icon components at render time.
 export const adminSidebarItems = [
   { label: "Dashboard", href: "/admin", icon: "Gauge" },
+  { label: "Notifications", href: "/notifications", icon: "Bell" },
   { label: "Leads", href: "/admin/leads", icon: "Workflow" },
+  { label: "Quotes", href: "/admin/quotes", icon: "FileText" },
   { label: "Unassigned Leads", href: "/admin/unassigned-leads", icon: "ShieldAlert" },
   { label: "Frames", href: "/admin/frames", icon: "Boxes" },
   { label: "Lenses", href: "/admin/lenses", icon: "Shapes" },

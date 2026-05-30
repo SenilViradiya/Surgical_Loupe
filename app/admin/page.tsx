@@ -11,6 +11,8 @@ import { LeadsChart } from "@/components/dashboard/leads-chart";
 import { getDealerPerformance } from "@/actions/dashboard/get-dealer-performance";
 
 import { DealerPerformance } from "@/components/dashboard/dealer-performance";
+import { getQuoteMetrics } from "@/src/lib/quotes/quote-service";
+import { formatCurrency } from "@/src/lib/quotes/quote-calculations";
 
 export default async function AdminPage() {
   const stats =
@@ -25,6 +27,7 @@ export default async function AdminPage() {
 
 const dealerPerformance =
   await getDealerPerformance();
+  const quoteMetrics = await getQuoteMetrics();
 
   return (
     <DashboardShell
@@ -51,6 +54,14 @@ const dealerPerformance =
         <StatsCards
           stats={stats}
         />
+        <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+          <Metric label="Quotes" value={quoteMetrics.totalQuotes} />
+          <Metric label="Sent" value={quoteMetrics.sentQuotes} />
+          <Metric label="Accepted" value={quoteMetrics.acceptedQuotes} />
+          <Metric label="Rejected" value={quoteMetrics.rejectedQuotes} />
+          <Metric label="Conversion" value={`${quoteMetrics.conversionRate}%`} />
+          <Metric label="Avg. Quote" value={formatCurrency(quoteMetrics.averageQuoteValue)} />
+        </div>
       </div>
       <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <LeadsChart
@@ -64,5 +75,14 @@ const dealerPerformance =
         />
       </div>
     </DashboardShell>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-2xl border bg-white p-4">
+      <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+      <p className="mt-2 text-2xl font-semibold">{value}</p>
+    </div>
   );
 }
