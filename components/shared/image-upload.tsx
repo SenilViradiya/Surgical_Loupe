@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -34,33 +32,25 @@ export function ImageUpload({
   onChange,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [preview, setPreview] = useState(value);
+  const [preview, setPreview] = useState<string | undefined>(getSafePreviewUrl(value));
+  const [previewFailed, setPreviewFailed] = useState(false);
 
   const { startUpload, isUploading } =
     useUploadThing(
       "imageUploader",
       {
-        onClientUploadComplete:
-          (res) => {
-            console.log(res);
+        onClientUploadComplete: (res) => {
+          console.log(res);
 
-            if (!res?.[0]) return;
+          if (!res?.[0]) return;
 
-            const uploadedUrl =
-              res[0].url;
+          const uploadedUrl = getSafePreviewUrl(res[0].url) ?? res[0].url;
 
-            setPreview(
-              uploadedUrl
-            );
+          setPreview(uploadedUrl);
+          onChange(uploadedUrl);
+        },
 
-            onChange(
-              uploadedUrl
-            );
-          },
-
-        onUploadError: (
-          error
-        ) => {
+        onUploadError: (error) => {
           console.log(error);
 
           alert(error.message);
@@ -69,7 +59,8 @@ export function ImageUpload({
     );
 
   useEffect(() => {
-    setPreview(value);
+    setPreview(getSafePreviewUrl(value));
+    setPreviewFailed(false);
   }, [value]);
 
   const handlePickFile = async (
@@ -77,9 +68,8 @@ export function ImageUpload({
   ) => {
     if (!file) return;
 
-    // Client-side validation
     const allowed = ["image/png", "image/jpeg", "image/webp"];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
 
     if (!allowed.includes(file.type)) {
       toast.error("Unsupported file type. Use PNG, JPEG or WEBP.");
@@ -148,18 +138,16 @@ export function ImageUpload({
         >
           <div className="relative flex min-h-40 items-center justify-center overflow-hidden rounded-lg border bg-muted/40">
             {preview ? (
-              preview.startsWith("data:") || preview.startsWith("blob:") ? (
+              previewFailed ? (
+                <div className="flex h-full w-full items-center justify-center text-center text-sm text-muted-foreground">
+                  Preview unavailable
+                </div>
+              ) : (
                 <img
                   src={preview}
                   alt="Uploaded preview"
                   className="absolute inset-0 h-full w-full object-cover"
-                />
-              ) : (
-                <Image
-                  src={preview}
-                  alt="Uploaded preview"
-                  fill
-                  className="object-cover"
+                  onError={() => setPreviewFailed(true)}
                 />
               )
             ) : (
@@ -222,4 +210,19 @@ export function ImageUpload({
       </CardContent>
     </Card>
   );
+}
+
+function getSafePreviewUrl(url?: string) {
+  if (!url) return undefined;
+
+  if (url.startsWith("data:") || url.startsWith("blob:") || url.startsWith("/")) {
+    return url;
+  }
+
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? url : undefined;
+  } catch {
+    return undefined;
+  }
 }

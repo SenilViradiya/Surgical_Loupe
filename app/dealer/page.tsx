@@ -11,6 +11,8 @@ import { Sidebar } from "@/components/layouts/sidebar";
 import { Navbar } from "@/components/layouts/navbar";
 
 import { dealerSidebarItems } from "@/constants/dealer-sidebar";
+import { getQuoteMetrics } from "@/src/lib/quotes/quote-service";
+import { formatCurrency } from "@/src/lib/quotes/quote-calculations";
 
 export default async function DealerPage() {
   const session =
@@ -41,6 +43,8 @@ export default async function DealerPage() {
       "/"
     );
   }
+
+  const quoteMetrics = await getQuoteMetrics(dealer.id);
 
   return (
     <DashboardShell
@@ -128,7 +132,25 @@ export default async function DealerPage() {
             </h2>
           </div>
         </div>
+
+        <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+          <Metric label="Quotes" value={quoteMetrics.totalQuotes} />
+          <Metric label="Sent" value={quoteMetrics.sentQuotes} />
+          <Metric label="Accepted" value={quoteMetrics.acceptedQuotes} />
+          <Metric label="Rejected" value={quoteMetrics.rejectedQuotes} />
+          <Metric label="Conversion" value={`${quoteMetrics.conversionRate}%`} />
+          <Metric label="Pipeline" value={formatCurrency(quoteMetrics.monthlyRevenuePipeline)} />
+        </div>
       </div>
     </DashboardShell>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-2xl border bg-white p-4">
+      <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+      <p className="mt-2 text-2xl font-semibold">{value}</p>
+    </div>
   );
 }

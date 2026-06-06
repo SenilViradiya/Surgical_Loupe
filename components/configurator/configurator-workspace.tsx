@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Frame, Headlight, Lens } from "@/lib/generated/prisma";
+import type { CompatibilitySnapshot } from "@/lib/compatibility/compatibility-types";
+import type { InventorySnapshot } from "@/lib/inventory/inventory-types";
 
 import { ConfiguratorScene, type ConfiguratorSceneHandle } from "@/components/3d/configurator-scene";
 import { FrameSelector } from "@/components/configurator/frame-selector";
@@ -13,6 +15,7 @@ import { LeadForm } from "@/components/configurator/lead-form";
 import ConfiguratorStepper from "@/components/configurator/configurator-stepper";
 import ConfiguratorLayout from "@/components/configurator/configurator-layout";
 import StickySummary from "@/components/configurator/sticky-summary";
+import { useConfiguratorStore } from "@/store/configurator-store";
 
 type StepId = "frame" | "lens" | "headlight" | "review" | "quote";
 
@@ -20,6 +23,8 @@ interface Props {
   frames: Frame[];
   lenses: Lens[];
   headlights: Headlight[];
+  compatibility: CompatibilitySnapshot;
+  inventory?: InventorySnapshot | null;
 }
 
 const STEP_IDS: StepId[] = ["frame", "lens", "headlight", "review", "quote"];
@@ -28,8 +33,17 @@ export function ConfiguratorWorkspace({
   frames,
   lenses,
   headlights,
+  compatibility,
+  inventory = null,
 }: Props) {
   const sceneRef = useRef<ConfiguratorSceneHandle | null>(null);
+  const {
+    frame: selectedFrame,
+    lens: selectedLens,
+    headlight: selectedHeadlight,
+    setLens,
+    setHeadlight,
+  } = useConfiguratorStore();
   const sectionRefs = useRef<Record<StepId, HTMLElement | null>>({
     frame: null,
     lens: null,
@@ -56,6 +70,58 @@ export function ConfiguratorWorkspace({
     ],
     []
   );
+
+  useEffect(() => {
+    if (!selectedFrame) return;
+
+    const frameLensRules = compatibility.frameLens.filter(
+      (relation) => relation.sourceId === selectedFrame.id
+    );
+
+    const frameHeadlightRules = compatibility.frameHeadlight.filter(
+      (relation) => relation.sourceId === selectedFrame.id
+    );
+
+    const lensInvalid =
+      selectedLens &&
+      frameLensRules.length > 0 &&
+      !frameLensRules.some((relation) => relation.targetId === selectedLens.id);
+
+    const headlightInvalidByFrame =
+      selectedHeadlight &&
+      frameHeadlightRules.length > 0 &&
+      !frameHeadlightRules.some((relation) => relation.targetId === selectedHeadlight.id);
+
+    const lensHeadlightRules = selectedLens
+      ? compatibility.lensHeadlight.filter(
+          (relation) => relation.sourceId === selectedLens.id
+        )
+      : [];
+
+    const headlightInvalidByLens =
+      selectedHeadlight &&
+      lensHeadlightRules.length > 0 &&
+      !lensHeadlightRules.some((relation) => relation.targetId === selectedHeadlight.id);
+
+    if (lensInvalid) {
+      setLens(undefined);
+      setHeadlight(undefined);
+      return;
+    }
+
+    if (headlightInvalidByFrame || headlightInvalidByLens) {
+      setHeadlight(undefined);
+    }
+  }, [
+    compatibility.frameHeadlight,
+    compatibility.frameLens,
+    compatibility.lensHeadlight,
+    selectedFrame,
+    selectedHeadlight,
+    selectedLens,
+    setHeadlight,
+    setLens,
+  ]);
 
   useEffect(() => {
     const elements = STEP_IDS.map((id) => sectionRefs.current[id]).filter(Boolean) as HTMLElement[];
@@ -199,7 +265,7 @@ export function ConfiguratorWorkspace({
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 1</p>
           <div className="mt-4">
-            <FrameSelector frames={frames} />
+              <FrameSelector frames={frames} />
           </div>
         </section>
 
@@ -215,8 +281,8 @@ export function ConfiguratorWorkspace({
           }
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 2</p>
-          <div className="mt-4">
-            <LensSelector lenses={lenses} />
+            <div className="mt-4">
+            <LensSelector lenses={lenses} compatibility={compatibility} inventory={inventory} />
           </div>
         </section>
 
@@ -232,8 +298,8 @@ export function ConfiguratorWorkspace({
           }
         >
           <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 3</p>
-          <div className="mt-4">
-            <HeadlightSelector headlights={headlights} />
+            <div className="mt-4">
+            <HeadlightSelector headlights={headlights} compatibility={compatibility} inventory={inventory} />
           </div>
         </section>
 

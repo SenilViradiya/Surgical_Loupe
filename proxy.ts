@@ -66,6 +66,14 @@ export default auth((request) => {
     }
   }
 
+  if (pathname.startsWith("/notifications")) {
+    if (!isAuthenticated) {
+      return NextResponse.redirect(
+        new URL("/login", request.url)
+      );
+    }
+  }
+
   return NextResponse.next();
 });
 
@@ -73,6 +81,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/dealer/:path*",
+    "/notifications/:path*",
     "/login",
     "/register",
     "/forgot-password",

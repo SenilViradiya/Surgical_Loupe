@@ -1,28 +1,80 @@
 "use client";
 
-import Image from "next/image";
+import FallbackImage from "@/components/shared/fallback-image";
 
 import { Lens } from "@/lib/generated/prisma";
 
 import { cn } from "@/lib/utils";
 
 import { useConfiguratorStore } from "@/store/configurator-store";
+import type { CompatibilitySnapshot } from "@/lib/compatibility/compatibility-types";
+import type { InventorySnapshot } from "@/lib/inventory/inventory-types";
 
 import { OptionSlider } from "./option-slider";
 import ProductOptionCard from "./product-option-card";
 
 interface Props {
   lenses: Lens[];
+  compatibility: CompatibilitySnapshot;
+  inventory?: InventorySnapshot | null;
 }
 
 export function LensSelector({
   lenses,
+  compatibility,
+  inventory = null,
 }: Props) {
   const {
+    frame: selectedFrame,
     lens: selectedLens,
     setLens,
   } =
     useConfiguratorStore();
+
+  const frameLocksLens = compatibility.frameLens.some(
+    (relation) => relation.sourceId === selectedFrame?.id
+  );
+
+  const frameAllowedLensIds = new Map(
+    compatibility.frameLens
+      .filter((relation) => relation.sourceId === selectedFrame?.id)
+      .map((relation) => [relation.targetId, relation.reason ?? undefined])
+  );
+
+  const availabilityLookup = new Map<string, { available: number; status?: string }>();
+  if (inventory?.lenses) {
+    for (const item of inventory.lenses) {
+      availabilityLookup.set(item.productId, { available: item.available, status: item.status });
+    }
+  }
+
+  const isLensCompatible = (lensId: string) => {
+    const avail = availabilityLookup.get(lensId);
+
+    if (avail && avail.available <= 0) return false;
+
+    if (!selectedFrame) return true;
+
+    if (!frameLocksLens) return true;
+
+    if (!frameAllowedLensIds.has(lensId)) return false;
+
+    return true;
+  };
+
+  const getLensDisabledReason = (lensId: string) => {
+    const avail = availabilityLookup.get(lensId);
+
+    if (avail && avail.available <= 0) return "Out of stock";
+
+    if (!selectedFrame) return undefined;
+
+    if (frameLocksLens && !frameAllowedLensIds.has(lensId)) {
+      return "Not compatible with selected frame";
+    }
+
+    return undefined;
+  };
 
   return (
     <OptionSlider
@@ -40,7 +92,10 @@ export function LensSelector({
           <ProductOptionCard
             key={lens.id}
             isActive={isActive}
+            disabled={!isLensCompatible(lens.id)}
+            disabledReason={getLensDisabledReason(lens.id)}
             onClick={() =>
+              isLensCompatible(lens.id) &&
               setLens({
                 id: lens.id,
                 name: lens.name,
@@ -52,7 +107,9 @@ export function LensSelector({
           >
             {lens.thumbnailUrl ? (
               <div className="relative h-20 w-full overflow-hidden sm:h-24">
-                <Image src={lens.thumbnailUrl} alt={lens.name} fill sizes="(max-width: 768px) 70vw, 16rem" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                <div className="absolute inset-0">
+                  <FallbackImage src={lens.thumbnailUrl} alt={lens.name} className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-[1.03]" />
+                </div>
               </div>
             ) : (
               <div className="flex h-24 items-center justify-center bg-[linear-gradient(135deg,rgba(148,163,184,0.18),rgba(255,255,255,0.55))] text-sm text-slate-500 sm:h-28">

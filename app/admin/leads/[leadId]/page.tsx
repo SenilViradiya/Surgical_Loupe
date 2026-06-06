@@ -9,6 +9,7 @@ import { Navbar } from "@/components/layouts/navbar";
 import { adminSidebarItems } from "@/constants/admin-sidebar";
 import { ReassignLeadForm } from "@/components/leads/reassign-lead-form";
 import { ActivityTimeline } from "@/components/leads/activity-timeline";
+import Link from "next/link";
 export default async function LeadDetailsPage({
   params,
 }: {
@@ -200,6 +201,11 @@ export default async function LeadDetailsPage({
             </div>
 
             <div className="pt-6">
+              <div className="mb-4">
+                <Link href={`/dealer/quotes/create/${lead.id}`} className="inline-flex items-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white">
+                  Create Quote
+                </Link>
+              </div>
               <DownloadQuoteButton
                 lead={{
                   fullName:

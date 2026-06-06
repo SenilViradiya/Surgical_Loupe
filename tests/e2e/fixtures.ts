@@ -13,6 +13,7 @@ import { prisma } from "../../lib/prisma";
 import { resetRateLimits } from "../../lib/rate-limit";
 import {
   DealerOnboardingStatus,
+  InventoryStatus,
   ProductStatus,
   UserRole,
 } from "../../lib/generated/prisma";
@@ -43,6 +44,11 @@ type SeededData = {
   };
   resetPasswordToken: string;
   uploadedImageUrl: string;
+  catalog: {
+    frame: { id: string; slug: string; name: string };
+    lens: { id: string; slug: string; name: string };
+    headlight: { id: string; slug: string; name: string };
+  };
 };
 
 const passwords = {
@@ -78,6 +84,11 @@ async function clearDatabase() {
       "Session",
       "Account",
       "VerificationToken",
+      "Notification",
+      "QuoteNotification",
+      "QuoteHistory",
+      "QuoteItem",
+      "Quote",
       "Lead",
       "Configuration",
       "DealerCoverage",
@@ -86,6 +97,12 @@ async function clearDatabase() {
       "Frame",
       "Lens",
       "Headlight",
+      "FrameLensCompatibility",
+      "FrameHeadlightCompatibility",
+      "LensHeadlightCompatibility",
+      "FrameInventory",
+      "LensInventory",
+      "HeadlightInventory",
       "Event",
       "ActivityLog"
     RESTART IDENTITY CASCADE;
@@ -195,42 +212,107 @@ export async function seedE2EData(): Promise<SeededData> {
     },
   });
 
-  await prisma.frame.create({
+  const frame = await prisma.frame.create({
     data: {
       name: "Atlas Frame",
       slug: "atlas-frame",
       description: "Precision frame for the configurator e2e seed.",
       modelUrl: "/models/frame.glb",
-      thumbnailUrl: "/images/frame.png",
+      thumbnailUrl: null,
       price: 1200,
       status: ProductStatus.ACTIVE,
     },
   });
 
-  await prisma.lens.create({
+  const lens = await prisma.lens.create({
     data: {
       name: "Precision Lens",
       slug: "precision-lens",
       description: "Compatible lens for seeded onboarding tests.",
       modelUrl: "/models/lens.glb",
-      thumbnailUrl: "/images/lens.png",
+      thumbnailUrl: null,
       magnification: "2.5x",
       price: 500,
       status: ProductStatus.ACTIVE,
     },
   });
 
-  await prisma.headlight.create({
+  const headlight = await prisma.headlight.create({
     data: {
       name: "Beam Headlight",
       slug: "beam-headlight",
       description: "Seeded light accessory for coverage.",
       modelUrl: "/models/headlight.glb",
-      thumbnailUrl: "/images/headlight.png",
+      thumbnailUrl: null,
       price: 900,
       status: ProductStatus.ACTIVE,
     },
   });
+
+  if (frame && lens && headlight) {
+    await prisma.frameInventory.create({
+      data: {
+        frameId: frame.id,
+        quantity: 10,
+        reserved: 0,
+        lowStockThreshold: 5,
+        status: InventoryStatus.IN_STOCK,
+      },
+    });
+
+    await prisma.lensInventory.create({
+      data: {
+        lensId: lens.id,
+        quantity: 3,
+        reserved: 0,
+        lowStockThreshold: 5,
+        status: InventoryStatus.LOW_STOCK,
+      },
+    });
+
+    await prisma.headlightInventory.create({
+      data: {
+        headlightId: headlight.id,
+        quantity: 10,
+        reserved: 0,
+        lowStockThreshold: 5,
+        status: InventoryStatus.IN_STOCK,
+      },
+    });
+
+    await prisma.frameLensCompatibility.createMany({
+      data: [
+        {
+          frameId: frame.id,
+          lensId: lens.id,
+          reason: "Seeded configurator compatibility pair.",
+        },
+      ],
+      skipDuplicates: true,
+    });
+
+    await prisma.frameHeadlightCompatibility.createMany({
+      data: [
+        {
+          frameId: frame.id,
+          headlightId: headlight.id,
+          reason: "Seeded configurator compatibility pair.",
+        },
+      ],
+      skipDuplicates: true,
+    });
+
+    await prisma.lensHeadlightCompatibility.createMany({
+      data: [
+        {
+          lensId: lens.id,
+          headlightId: headlight.id,
+          reason: "Seeded configurator compatibility pair.",
+        },
+      ],
+      skipDuplicates: true,
+    });
+  }
 
   return {
     admin: {
@@ -258,6 +340,23 @@ export async function seedE2EData(): Promise<SeededData> {
     },
     resetPasswordToken: tokens.reset,
     uploadedImageUrl: fixtureImageUrl,
+    catalog: {
+      frame: {
+        id: frame.id,
+        slug: frame.slug,
+        name: frame.name,
+      },
+      lens: {
+        id: lens.id,
+        slug: lens.slug,
+        name: lens.name,
+      },
+      headlight: {
+        id: headlight.id,
+        slug: headlight.slug,
+        name: headlight.name,
+      },
+    },
   };
 }
 
@@ -291,11 +390,7 @@ export async function loginWithUi(
   await page.getByPlaceholder("john@example.com").fill(email);
   await page.getByPlaceholder("******").fill(password);
   await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.request().method() === "POST" &&
-        response.url().includes("/api/auth/callback/credentials")
-    ),
+    page.waitForURL((url) => url.pathname === "/"),
     page.getByRole("button", { name: "Login" }).click(),
   ]);
 }

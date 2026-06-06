@@ -81,7 +81,8 @@ export function LeadForm() {
           !configuration.configurationId
         ) {
           toast.error(
-            "Failed to save configuration"
+            configuration.message ??
+              "Failed to save configuration"
           );
 
           return;

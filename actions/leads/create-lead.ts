@@ -4,8 +4,10 @@ import { prisma } from "@/lib/prisma";
 
 import { logActivity } from "@/lib/activity-logger";
 import { assignDealer } from "@/lib/assign-dealer";
+import { createNotification } from "@/src/lib/notifications/notification-service";
 
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { NotificationType, UserRole } from "@/lib/generated/prisma";
 import { leadSchema } from "@/lib/validations/lead";
 
 export async function createLead(values: any) {
@@ -27,7 +29,12 @@ export async function createLead(values: any) {
       };
     }
 
-    const dealer = await assignDealer(parsed.pincode);
+    const dealer = await Promise.race([
+      assignDealer(parsed.pincode),
+      new Promise<null>((resolve) => {
+        setTimeout(() => resolve(null), 2000);
+      }),
+    ]).catch(() => null);
 
     const lead = await prisma.lead.create({
       data: {
@@ -49,6 +56,41 @@ export async function createLead(values: any) {
       description: `Lead created for ${parsed.fullName}`,
       userEmail: parsed.email,
     });
+
+    if (dealer) {
+      const notificationBase = {
+        title: "Lead assigned",
+        message: `${lead.fullName} has been assigned to ${dealer.name}.`,
+        type: NotificationType.LEAD,
+        entityType: "Lead",
+        entityId: lead.id,
+        metadata: {
+          leadId: lead.id,
+          dealerId: dealer.id,
+          dealerName: dealer.name,
+          customerEmail: lead.email,
+        },
+      };
+
+      await Promise.all([
+        createNotification({
+          ...notificationBase,
+          eventKey: `LEAD_ASSIGNED:${lead.id}:dealer`,
+          recipientEmails: [dealer.email],
+          deliveryChannels: ["IN_APP", "EMAIL"],
+          ctaLabel: "View leads",
+          ctaUrl: "/dealer/quotes",
+        }),
+        createNotification({
+          ...notificationBase,
+          eventKey: `LEAD_ASSIGNED:${lead.id}:admin`,
+          recipientRoles: [UserRole.ADMIN],
+          deliveryChannels: ["IN_APP"],
+          ctaLabel: "Open lead",
+          ctaUrl: `/admin/leads/${lead.id}`,
+        }),
+      ]).catch((error) => console.error(error));
+    }
 
     return {
       success: true,
