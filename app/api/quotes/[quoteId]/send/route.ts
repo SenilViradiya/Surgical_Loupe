@@ -24,7 +24,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ quoteId
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, message: "Failed to send quote" }, { status: 500 });
+    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }

@@ -89,7 +89,7 @@ export async function createLead(values: any) {
           ctaLabel: "Open lead",
           ctaUrl: `/admin/leads/${lead.id}`,
         }),
-      ]).catch((error) => console.error(error));
+      ]);
     }
 
     return {
@@ -97,7 +97,7 @@ export async function createLead(values: any) {
       leadId: lead.id,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

@@ -37,7 +37,7 @@ export async function updateLens(
       message: "Lens updated",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

@@ -127,7 +127,7 @@ export function LeadForm() {
           `/configurator/${configuration.configurationId}`
         );
       } catch (error) {
-        console.log(error);
+
 
         toast.error(
           "Something went wrong"

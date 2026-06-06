@@ -81,7 +81,7 @@ export async function getDealerAnalytics() {
       },
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       monthly: [],

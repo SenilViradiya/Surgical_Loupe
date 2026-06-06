@@ -87,14 +87,14 @@ export async function reassignLead(values: any) {
         ctaLabel: "Open lead",
         ctaUrl: `/admin/leads/${parsed.leadId}`,
       }),
-    ]).catch((error) => console.error(error));
+    ]);
 
     revalidatePath(`/admin/leads/${parsed.leadId}`);
     revalidatePath("/admin/unassigned-leads");
 
     return { success: true };
   } catch (error) {
-    console.log(error);
+
     return { success: false };
   }
 }

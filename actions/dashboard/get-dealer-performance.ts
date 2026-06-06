@@ -42,7 +42,7 @@ export async function getDealerPerformance() {
       }
     );
   } catch (error) {
-    console.log(error);
+
 
     return [];
   }

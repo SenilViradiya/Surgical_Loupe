@@ -11,7 +11,7 @@ export async function fetchDealerDetailsAction(dealerId: string) {
     const details = await getDealerDetails(dealerId);
     return { success: true, data: details };
   } catch (error) {
-    console.error("Error fetching dealer details:", error);
+
     return { success: false, message: "Failed to fetch dealer details" };
   }
 }

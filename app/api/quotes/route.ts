@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.error(error);
+
     return NextResponse.json({ success: false, message: "Failed to create quote" }, { status: 500 });
   }
 }

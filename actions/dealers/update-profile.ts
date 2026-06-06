@@ -1,23 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/src/lib/notifications/notification-service";
-
 import { dealerProfileSchema } from "@/lib/validations/dealer";
-
 import { requireActionRole } from "@/lib/authorization";
-
 import { NotificationType, UserRole } from "@/lib/generated/prisma";
-
-import { z } from "zod";
 
 export async function updateDealerProfile(values: any) {
   const session = await requireActionRole([UserRole.DEALER]);
-
   const parsed = dealerProfileSchema.parse(values);
-
   const email = session.user.email as string;
 
   const updateData: any = {
@@ -30,7 +22,6 @@ export async function updateDealerProfile(values: any) {
     state: parsed.state ?? undefined,
   };
 
-  // If at least one meaningful field is present, mark profile completed
   const meaningful = Object.values(updateData).some((v) => v !== undefined && v !== "");
 
   if (meaningful) {
@@ -50,7 +41,8 @@ export async function updateDealerProfile(values: any) {
     });
 
     if (dealer) {
-      await createNotification({
+      // Detached background task to avoid blocking the user
+      void createNotification({
         recipientEmails: [dealer.email],
         recipientRoles: [UserRole.ADMIN],
         title: "Dealer activated",
@@ -67,11 +59,12 @@ export async function updateDealerProfile(values: any) {
         deliveryChannels: ["IN_APP", "EMAIL"],
         ctaLabel: "Open dealers",
         ctaUrl: "/admin/dealers",
-      }).catch((error) => console.error(error));
+      }).catch((error) => {
+
+      });
     }
   }
 
-  // If a profile image / photo URL was provided, persist it on the User record
   if (parsed.photoUrl) {
     try {
       await prisma.user.update({
@@ -79,16 +72,17 @@ export async function updateDealerProfile(values: any) {
         data: { image: parsed.photoUrl },
       });
     } catch (e) {
-      // don't fail the profile update if user image persist fails
-      console.log("Failed to persist user image", e);
+
     }
   }
+
 
   try {
     revalidatePath("/dealer");
   } catch (e) {
-    // ignore in non-edge environments
+
   }
+
 
   return { success: true, message: "Profile updated" };
 }

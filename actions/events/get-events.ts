@@ -83,7 +83,7 @@ export async function getEvents({
       currentPage: page,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       events: [],

@@ -70,7 +70,7 @@ export async function registerUser(
       message: "Account created successfully",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

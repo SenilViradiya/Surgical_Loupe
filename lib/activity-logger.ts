@@ -34,6 +34,6 @@ export async function logActivity({
       },
     });
   } catch (error) {
-    console.log(error);
+
   }
 }

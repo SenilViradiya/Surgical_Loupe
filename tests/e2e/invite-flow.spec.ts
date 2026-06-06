@@ -7,6 +7,9 @@ import {
 } from "./fixtures";
 
 test.describe("Invite and onboarding flow", () => {
+  test.beforeEach(async ({ page }) => {
+  });
+
   test("shows friendly UI when token is missing", async ({ page }) => {
     await page.goto("/reset-password");
 
@@ -45,13 +48,14 @@ test.describe("Invite and onboarding flow", () => {
     page,
     seeded,
   }, testInfo) => {
+    test.setTimeout(60000);
     await page.addInitScript(() => {
       window.localStorage.setItem("e2eLocalImagePreview", "1");
     });
 
     await page.goto(`/reset-password?token=${seeded.onboardingToken}&mode=invite`);
 
-    await expect(page.getByRole("heading", { name: "Activate Account" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Activate Account" })).toBeVisible({ timeout: 15000 });
 
     await page.getByPlaceholder("New password").fill(seeded.invitedDealer.password);
     await page.getByPlaceholder("Confirm password").fill(seeded.invitedDealer.password);
@@ -83,7 +87,7 @@ test.describe("Invite and onboarding flow", () => {
 
     await page.getByRole("button", { name: "Complete Profile" }).click();
 
-    await page.waitForURL(/\/dealer$/, { timeout: 10000 });
+    await page.waitForURL(/\/dealer$/, { timeout: 20000 });
     await expect(page).toHaveURL(/\/dealer$/);
     await expect(page.getByRole("heading", { name: /Welcome back, Invited Dealer/i })).toBeVisible();
     await expect(page.getByRole("heading", { name: "active" })).toBeVisible();

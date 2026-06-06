@@ -67,7 +67,7 @@ export async function getLeads() {
 
     return [];
   } catch (error) {
-    console.log(error);
+
 
     return [];
   }

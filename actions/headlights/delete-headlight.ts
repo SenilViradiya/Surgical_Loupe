@@ -20,7 +20,7 @@ export async function deleteHeadlight(
       message: "Headlight deleted",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

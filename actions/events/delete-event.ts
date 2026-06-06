@@ -21,7 +21,7 @@ export async function deleteEvent(
       message: "Event deleted",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

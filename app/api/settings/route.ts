@@ -35,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ settings: data });
   } catch (error: any) {
-    console.error(error);
+
     return NextResponse.json({ settings: {} }, { status: 500 });
   }
 }
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, settings: updated });
   } catch (error: any) {
-    console.error(error);
+
     return NextResponse.json({ success: false, message: error?.message ?? "Failed" }, { status: 500 });
   }
 }

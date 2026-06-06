@@ -32,28 +32,42 @@ export default function ResetPasswordForm({
 
   // Validate token on mount
   useEffect(() => {
-    if (!token) {
-      setTokenStatus("missing");
-      return;
-    }
+    let cancelled = false;
 
-    (async () => {
+
+    async function validate() {
+
+      if (!token) {
+        setTokenStatus("missing");
+        return;
+      }
+
       try {
         const res = await fetch(`/api/validate-token?token=${encodeURIComponent(token)}`);
 
+
+        if (cancelled) return;
+
         if (res.status === 200) {
+
           setTokenStatus("valid");
         } else if (res.status === 410) {
           setTokenStatus("expired");
-        } else if (res.status === 404) {
-          setTokenStatus("invalid");
         } else {
           setTokenStatus("invalid");
         }
       } catch (e) {
-        setTokenStatus("invalid");
+        if (!cancelled) {
+          setTokenStatus("invalid");
+        }
       }
-    })();
+    }
+
+    validate();
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   const heading =
@@ -87,7 +101,7 @@ export default function ResetPasswordForm({
       if (!response.success) {
         toast.error(
           response.message ??
-            "Unable to reset password"
+          "Unable to reset password"
         );
 
         return;

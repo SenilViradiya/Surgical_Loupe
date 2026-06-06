@@ -84,7 +84,7 @@ export async function getHeadlights({
       currentPage: page,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       headlights: [],

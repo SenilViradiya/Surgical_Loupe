@@ -72,7 +72,7 @@ async function sendNotificationEmail(input: {
       providerMessageId: response.data?.id ?? null,
     };
   } catch (error) {
-    console.error(error);
+
     return { success: false, providerMessageId: null };
   }
 }

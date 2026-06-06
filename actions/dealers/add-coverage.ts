@@ -50,7 +50,7 @@ export async function addCoverage(values: any) {
 
     return { success: true };
   } catch (error) {
-    console.log(error);
+
     return { success: false };
   }
 }

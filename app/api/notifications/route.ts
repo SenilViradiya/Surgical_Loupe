@@ -24,7 +24,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ success: true, ...result });
   } catch (error) {
-    console.error(error);
+
     return NextResponse.json({ success: false, message: "Failed to load notifications" }, { status: 500 });
   }
 }

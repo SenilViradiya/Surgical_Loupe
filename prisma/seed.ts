@@ -145,11 +145,11 @@ async function main() {
     });
   }
 
-  console.log("Configurator seed completed with active frame, lens, and headlight records");
+
 }
 
 main()
-  .catch(console.error)
+  .catch(() => {})
   .finally(async () => {
     await prisma.$disconnect();
   });

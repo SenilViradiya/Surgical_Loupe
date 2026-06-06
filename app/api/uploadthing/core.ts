@@ -14,7 +14,7 @@ export const ourFileRouter = {
   }, {
     awaitServerData: false,
   }).onUploadComplete(async ({ file }) => {
-    console.log("Upload complete", file.url);
+
 
     return {
       url: file.url,
@@ -29,7 +29,7 @@ export const ourFileRouter = {
   }, {
     awaitServerData: false,
   }).onUploadComplete(async ({ file }) => {
-    console.log("Model uploaded", file.url);
+
 
     return {
       url: file.url,

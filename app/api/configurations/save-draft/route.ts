@@ -8,14 +8,16 @@ import { validateInventory } from "@/lib/inventory/inventory-service";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
+    const start = Date.now();
     const parsed = configurationSchema.parse(body);
 
+    const vStart = Date.now();
     const compatibility = await validateConfiguration({
       frameId: parsed.frameId,
       lensId: parsed.lensId,
       headlightId: parsed.headlightId ?? null,
     });
+    const vEnd = Date.now();
 
     if (!compatibility.success) {
       return NextResponse.json(compatibility, { status: 400 });
@@ -53,12 +55,11 @@ export async function POST(req: Request) {
       },
     });
 
+    const end = Date.now();
+
     return NextResponse.json({ success: true, configurationId: configuration.id });
-  } catch (error: any) {
-    console.error(error);
-
-    const message = error?.message ?? "Failed to save draft";
-
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to save draft";
     return NextResponse.json({ success: false, code: "INCOMPATIBLE_PRODUCTS", message }, { status: 500 });
   }
 }

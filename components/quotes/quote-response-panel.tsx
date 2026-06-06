@@ -40,7 +40,7 @@ export function QuoteResponsePanel({ quoteId, token, status }: Props) {
       toast.success(action === "accept" ? "Quote accepted" : "Quote rejected");
       router.refresh();
     } catch (error) {
-      console.error(error);
+
       toast.error("Unable to update quote");
     } finally {
       setLoading(null);

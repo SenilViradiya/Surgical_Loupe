@@ -100,7 +100,7 @@ export async function forgotPassword(email: string) {
       success: true,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

@@ -54,7 +54,7 @@ export function SettingsForm({ defaultValues }: Props) {
         toast.success("Settings saved");
         router.refresh();
       } catch (err: any) {
-        console.error(err);
+
         toast.error("Failed to save settings");
       }
     });

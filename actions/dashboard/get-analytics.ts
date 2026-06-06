@@ -81,7 +81,7 @@ export async function getAnalytics() {
 
     return analytics;
   } catch (error) {
-    console.log(error);
+
 
     return [];
   }

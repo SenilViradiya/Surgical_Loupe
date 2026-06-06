@@ -1,17 +1,14 @@
 "use client";
 
-import {
-  Canvas,
-} from "@react-three/fiber";
-
+import { Canvas } from "@react-three/fiber";
 import {
   Environment,
   OrbitControls,
 } from "@react-three/drei";
-
 import {
   Suspense,
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -66,6 +63,11 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
   const cameraRef = useRef<PerspectiveCamera | null>(null);
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  const onModelReady = useCallback(() => {
+    setIsReady(true);
+  }, []);
 
   useEffect(() => {
     if (!frame && initialFrame) {
@@ -75,7 +77,11 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === wrapperRef.current);
+      const element = wrapperRef.current;
+
+
+
+      setIsFullscreen(document.fullscreenElement === element);
     };
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);
@@ -115,17 +121,23 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
   };
 
   const toggleFullscreen = async () => {
+
     const element = wrapperRef.current;
 
     if (!element) return;
 
     if (document.fullscreenElement === element) {
-      document.exitFullscreen?.().catch(() => undefined);
+
+      await document.exitFullscreen?.().catch(() => undefined);
       setIsFullscreen(false);
       return;
     }
 
-    element.requestFullscreen?.().catch(() => undefined);
+
+
+    await element.requestFullscreen?.().catch(() => undefined);
+
+
     setIsFullscreen(true);
   };
 
@@ -139,6 +151,7 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
   return (
     <div
       ref={wrapperRef}
+      data-testid={isReady ? "configurator-ready" : "configurator-loading"}
       className={cn(
         "relative overflow-hidden",
         isFullscreen
@@ -146,11 +159,10 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
           : "h-88 w-full rounded-2xl border border-border/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),rgba(255,255,255,0.04)_35%,rgba(12,15,18,0.96)_100%)] shadow-[0_30px_80px_-28px_rgba(15,23,42,0.55)] sm:h-112 sm:rounded-[2rem] lg:h-144 xl:h-168"
       )}
     >
-      {isFullscreen && (
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_36%),radial-gradient(circle_at_bottom,rgba(56,189,248,0.12),transparent_28%)]" />
-      )}
-
       <div className={cn("relative h-full w-full overflow-hidden", isFullscreen ? "rounded-[1.75rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),rgba(255,255,255,0.04)_35%,rgba(12,15,18,0.98)_100%)] shadow-[0_40px_120px_-50px_rgba(2,6,23,0.85)] animate-viewer-enter" : "rounded-[inherit]")}>
+        {isFullscreen && (
+          <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_36%),radial-gradient(circle_at_bottom,rgba(56,189,248,0.12),transparent_28%)]" />
+        )}
         <div className="absolute left-3 top-3 z-10 rounded-full border border-white/10 bg-black/35 px-2.5 py-1 text-[10px] tracking-[0.22em] text-white/70 uppercase backdrop-blur sm:left-6 sm:top-6 sm:px-3 sm:text-xs sm:tracking-[0.24em]">
           Live 3D preview
         </div>
@@ -271,7 +283,10 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
               />
             </mesh>
 
-            <Environment preset="city" />
+            {process.env.NEXT_PUBLIC_E2E !== "true" && (
+              <Environment preset="city" />
+            )}
+            <ReadyNotifier onReady={onModelReady} />
           </Suspense>
 
           <OrbitControls
@@ -293,3 +308,10 @@ export const ConfiguratorScene = forwardRef<ConfiguratorSceneHandle, Props>(func
 });
 
 ConfiguratorScene.displayName = "ConfiguratorScene";
+
+function ReadyNotifier({ onReady }: { onReady: () => void }) {
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+  return null;
+}

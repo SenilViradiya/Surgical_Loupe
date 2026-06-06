@@ -137,7 +137,7 @@ async function emitQuoteNotifications(params: {
     ctaUrl: "/admin/quotes",
   });
 
-  await Promise.all([dealerNotification, adminNotification]).catch((error) => console.error(error));
+  await Promise.all([dealerNotification, adminNotification]);
 }
 
 export async function createQuote(values: CreateQuoteInput) {
@@ -481,22 +481,30 @@ async function markViewed(quoteId: string, token: string) {
 }
 
 export async function acceptQuote(values: QuoteResponseInput) {
+  const tStart = Date.now();
+
   const parsed = quoteResponseSchema.parse(values);
   const quote = await markViewed(parsed.quoteId, parsed.token);
 
   if (!quote) {
+
     return { success: false, message: "Quote not found or token invalid" };
   }
+
+
 
   if (quote.expiresAt.getTime() < Date.now()) {
     return { success: false, message: "Quote has expired" };
   }
 
   if (quote.status !== QuoteStatus.SENT && quote.status !== QuoteStatus.VIEWED) {
+
     return { success: false, message: "Quote cannot be accepted" };
   }
 
+  const txStart = Date.now();
   const updated = await prisma.$transaction(async (tx) => {
+    const uStart = Date.now();
     const convertedCount = await tx.quote.updateMany({
       where: { id: quote.id },
       data: {
@@ -505,10 +513,14 @@ export async function acceptQuote(values: QuoteResponseInput) {
       },
     });
 
+
     if (!convertedCount.count) {
-      throw new Error("Quote not found during conversion");
+      const actual = await prisma.quote.findUnique({ where: { id: quote.id } });
+
+      throw new Error(`Quote not found during conversion (ID: ${quote.id})`);
     }
 
+    const h1Start = Date.now();
     await tx.quoteHistory.create({
       data: {
         quoteId: quote.id,
@@ -519,20 +531,26 @@ export async function acceptQuote(values: QuoteResponseInput) {
       },
     });
 
+
+    const lStart = Date.now();
     await tx.lead.update({
       where: { id: quote.leadId },
       data: { status: LeadStatus.CONVERTED },
     });
 
+
+    const fStart = Date.now();
     const acceptedQuote = await tx.quote.findUnique({
       where: { id: quote.id },
       include: { lead: true, dealer: true },
     });
 
+
     if (!acceptedQuote) {
       throw new Error("Quote not found after acceptance update");
     }
 
+    const h2Start = Date.now();
     await tx.quoteHistory.create({
       data: {
         quoteId: quote.id,
@@ -544,6 +562,8 @@ export async function acceptQuote(values: QuoteResponseInput) {
       },
     });
 
+
+    const nStart = Date.now();
     await tx.quoteNotification.create({
       data: {
         quoteId: quote.id,
@@ -555,8 +575,11 @@ export async function acceptQuote(values: QuoteResponseInput) {
       },
     });
 
+
     return acceptedQuote;
   }, { timeout: 20000 });
+
+
 
   await logActivity({
     action: "QUOTE_ACCEPTED",
@@ -566,6 +589,7 @@ export async function acceptQuote(values: QuoteResponseInput) {
     userEmail: quote.sentToEmail,
   });
 
+  const ntfStart = Date.now();
   await emitQuoteNotifications({
     quote: {
       id: updated.id,
@@ -582,6 +606,8 @@ export async function acceptQuote(values: QuoteResponseInput) {
     eventKey: `QUOTE_ACCEPTED:${updated.id}`,
     ctaUrl: "/admin/quotes",
   });
+
+
 
   return { success: true, quoteId: updated.id };
 }

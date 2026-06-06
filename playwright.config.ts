@@ -17,5 +17,10 @@ export default defineConfig({
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
+    env: {
+      NEXT_PUBLIC_E2E: 'true',
+    },
+    stdout: "pipe",
+    stderr: "pipe",
   },
 });

@@ -20,7 +20,7 @@ export async function deleteLens(
       message: "Lens deleted",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

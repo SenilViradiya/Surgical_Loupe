@@ -35,7 +35,7 @@ export async function updateFrame(
       message: "Frame updated",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

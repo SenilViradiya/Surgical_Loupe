@@ -58,7 +58,7 @@ export async function sendLeadEmail(values: any) {
 
     return { success: true };
   } catch (error) {
-    console.log(error);
+
     return { success: false };
   }
 }

@@ -40,7 +40,7 @@ export function EmailPreview({
         toast.error(json?.message ?? "Failed to send test email");
       }
     } catch (err) {
-      console.error(err);
+
       toast.error("Failed to send test email");
     } finally {
       setSending(false);
