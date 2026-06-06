@@ -33,7 +33,7 @@ export function ConfigSummary() {
         Configuration summary
       </p>
 
-      <h2 className="mt-2 font-heading text-2xl text-slate-950">
+      <h2 className="mt-2 font-heading text-3xl text-slate-950">
         Your selected build
       </h2>
 
@@ -62,20 +62,20 @@ export function ConfigSummary() {
           </span>
         </div>
 
-        <div className="mt-2 rounded-2xl bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
-          <div className="flex items-center justify-between text-lg font-semibold text-slate-950">
+        <div className="mt-2 rounded-2xl bg-white px-4 py-4 shadow-md ring-1 ring-slate-200">
+          <div className="flex items-center justify-between text-xl font-semibold text-slate-950">
             <span>Total</span>
 
-            <span>₹{total}</span>
+            <span className="text-2xl">₹{total}</span>
           </div>
 
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-sm text-slate-500">
             Pricing updates as you refine the configuration.
           </p>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
         {/* Use sonner toast for feedback and disable when required selections missing */}
         <SaveDraftButton frame={frame} lens={lens} headlight={headlight} />
       </div>
@@ -146,7 +146,7 @@ function SaveDraftButton({
         }
       }}
       variant="secondary"
-      className="rounded-full px-5"
+      className="rounded-full px-6 py-3 bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {saving ? "Saving..." : "Save Draft"}
     </Button>
