@@ -47,7 +47,7 @@ export async function createFrame(
       message: "Frame created",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

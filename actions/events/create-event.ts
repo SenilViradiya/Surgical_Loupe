@@ -47,7 +47,7 @@ export async function createEvent(
       message: "Event created",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

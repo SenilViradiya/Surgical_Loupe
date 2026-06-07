@@ -40,7 +40,7 @@ export function ImageUpload({
       "imageUploader",
       {
         onClientUploadComplete: (res) => {
-          console.log(res);
+
 
           if (!res?.[0]) return;
 
@@ -51,7 +51,7 @@ export function ImageUpload({
         },
 
         onUploadError: (error) => {
-          console.log(error);
+
 
           alert(error.message);
         },
@@ -143,12 +143,17 @@ export function ImageUpload({
                   Preview unavailable
                 </div>
               ) : (
-                <img
-                  src={preview}
-                  alt="Uploaded preview"
-                  className="absolute inset-0 h-full w-full object-cover"
-                  onError={() => setPreviewFailed(true)}
-                />
+                <>
+                  <img
+                    src={preview}
+                    alt="Uploaded preview"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    onError={() => {
+
+                      setPreviewFailed(true);
+                    }}
+                  />
+                </>
               )
             ) : (
               <div className="flex flex-col items-center gap-2 text-center text-sm text-muted-foreground">

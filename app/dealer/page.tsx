@@ -1,47 +1,33 @@
 import { auth } from "@/auth";
-
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
 
 import { DashboardShell } from "@/components/layouts/dashboard-shell";
-
 import { Sidebar } from "@/components/layouts/sidebar";
-
 import { Navbar } from "@/components/layouts/navbar";
-
 import { dealerSidebarItems } from "@/constants/dealer-sidebar";
 import { getQuoteMetrics } from "@/src/lib/quotes/quote-service";
 import { formatCurrency } from "@/src/lib/quotes/quote-calculations";
 
 export default async function DealerPage() {
-  const session =
-    await auth();
+  const session = await auth();
 
-  if (
-    !session?.user
-  ) {
-    return redirect(
-      "/login"
-    );
+  if (!session?.user) {
+    return redirect("/login");
   }
 
-  const dealer =
-    await prisma.dealer.findUnique({
-      where: {
-        email:
-          session.user.email!,
-      },
-
-      include: {
-        leads: true,
-      },
-    });
+  const dealer = await prisma.dealer.findUnique({
+    where: {
+      email: session.user.email!,
+    },
+    include: {
+      leads: true,
+    },
+  });
 
   if (!dealer) {
-    return redirect(
-      "/"
-    );
+    return redirect("/");
   }
 
   const quoteMetrics = await getQuoteMetrics(dealer.id);

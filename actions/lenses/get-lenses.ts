@@ -84,7 +84,7 @@ export async function getLenses({
       currentPage: page,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       lenses: [],

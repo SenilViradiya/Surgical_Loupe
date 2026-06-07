@@ -177,7 +177,7 @@ export async function createDealer(
       deliveryChannels: ["IN_APP"],
       ctaLabel: "Open dealers",
       ctaUrl: "/admin/dealers",
-    }).catch((error) => console.error(error));
+    });
 
     revalidatePath(
       "/admin/dealers"
@@ -188,7 +188,7 @@ export async function createDealer(
       message: "Dealer invitation sent",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

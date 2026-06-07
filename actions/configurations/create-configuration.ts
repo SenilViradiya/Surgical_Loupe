@@ -7,24 +7,28 @@ import { validateConfiguration } from "@/lib/compatibility/compatibility-service
 import { validateInventory } from "@/lib/inventory/inventory-service";
 
 export async function createConfiguration(values: any) {
+  const requestId = crypto.randomUUID();
+
   try {
     const parsed = configurationSchema.parse(values);
+
 
     const compatibility = await validateConfiguration({
       frameId: parsed.frameId,
       lensId: parsed.lensId,
       headlightId: parsed.headlightId ?? null,
-    });
+    }, requestId);
 
     if (!compatibility.success) {
       return compatibility;
     }
 
+
     const availability = await validateInventory({
       frameId: parsed.frameId,
       lensId: parsed.lensId,
       headlightId: parsed.headlightId ?? null,
-    });
+    }, requestId);
 
     if (!availability.success) {
       return availability;
@@ -44,6 +48,7 @@ export async function createConfiguration(values: any) {
       };
     }
 
+
     const configuration = await prisma.configuration.create({
       data: {
         frameId: parsed.frameId,
@@ -52,12 +57,13 @@ export async function createConfiguration(values: any) {
       },
     });
 
+
     return {
       success: true,
       configurationId: configuration.id,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

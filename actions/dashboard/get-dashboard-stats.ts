@@ -53,7 +53,7 @@ export async function getDashboardStats() {
       conversionRate,
     };
   } catch (error) {
-    console.log(error);
+
 
     return null;
   }

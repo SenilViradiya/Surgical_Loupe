@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 import { updateDealerProfile } from "@/actions/dealers/update-profile";
@@ -13,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function DealerOnboardingProfilePage() {
   const router = useRouter();
+  const { update } = useSession();
 
   const [companyName, setCompanyName] = useState("");
   const [businessDetails, setBusinessDetails] = useState("");
@@ -28,6 +30,7 @@ export default function DealerOnboardingProfilePage() {
     e.preventDefault();
 
     setLoading(true);
+
 
     try {
       const res = await updateDealerProfile({
@@ -46,9 +49,16 @@ export default function DealerOnboardingProfilePage() {
         return;
       }
 
+
       toast.success("Profile completed — welcome aboard");
 
+
+      await update();
+
+
+
       router.push("/dealer");
+
     } finally {
       setLoading(false);
     }

@@ -23,7 +23,7 @@ export async function getConfiguration(
 
     return configuration;
   } catch (error) {
-    console.log(error);
+
 
     return null;
   }

@@ -81,11 +81,11 @@ export async function updateCompatibility(values: {
       deliveryChannels: ["IN_APP"],
       ctaLabel: "Open compatibility",
       ctaUrl: "/admin/compatibility",
-    }).catch((error) => console.error(error));
+    });
 
     return { success: true };
   } catch (error) {
-    console.error(error);
+
 
     return {
       success: false,

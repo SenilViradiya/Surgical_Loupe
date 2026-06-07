@@ -47,7 +47,7 @@ export function ModelUpload({
       "modelUploader",
       {
         onClientUploadComplete: (res) => {
-          console.log(res);
+
 
           if (!res?.[0]) return;
 
@@ -59,7 +59,7 @@ export function ModelUpload({
         },
 
         onUploadError: (error) => {
-          console.log(error);
+
 
           alert(error.message);
         },

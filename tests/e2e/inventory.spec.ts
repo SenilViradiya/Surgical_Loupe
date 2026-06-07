@@ -18,6 +18,8 @@ async function selectConfiguratorProducts(
     includeHeadlight?: boolean;
   } = {}
 ) {
+  await expect(page.getByTestId("configurator-ready")).toBeVisible({ timeout: 15000 });
+
   const frameButton = page.getByRole("button", {
     name: new RegExp(seeded.catalog.frame.name, "i"),
   }).first();
@@ -40,6 +42,7 @@ async function selectConfiguratorProducts(
     await expect(page.getByRole("complementary")).toContainText(seeded.catalog.headlight.name, { timeout: 5000 });
   }
 }
+
 
 test.describe("Inventory workflows", () => {
   test("shows out-of-stock products as visible, disabled, and explained", async ({ page, seeded }) => {

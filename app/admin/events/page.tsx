@@ -13,18 +13,15 @@ import { TableToolbar } from "@/components/shared/table-toolbar";
 import { Pagination } from "@/components/shared/pagination";
 import { EmptyState } from "@/components/shared/empty-state";
 
-interface Props {
+export default async function EventsPage({
+  searchParams,
+}: {
   searchParams: Promise<{
     search?: string;
     page?: string;
   }>;
-}
-
-export default async function EventsPage({
-  searchParams,
-}: Props) {
-  const params =
-    await searchParams;
+}) {
+  const params = await searchParams;
 
   const search =
     params.search ?? "";

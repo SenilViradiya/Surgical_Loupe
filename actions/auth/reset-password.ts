@@ -71,7 +71,7 @@ export async function resetPassword({
       email: verificationToken.identifier,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

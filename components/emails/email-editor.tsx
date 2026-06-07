@@ -43,7 +43,7 @@ export function EmailEditor({ templateId = "lead-created" }: { templateId?: stri
         toast.error(json?.message ?? "Failed to save template");
       }
     } catch (err) {
-      console.error(err);
+
       toast.error("Failed to save template");
     } finally {
       setLoading(false);

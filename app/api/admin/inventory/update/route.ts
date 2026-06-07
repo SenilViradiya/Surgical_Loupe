@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(error);
+
 
     const contentType = req.headers.get("content-type") || "";
     if (!contentType.includes("application/json")) {

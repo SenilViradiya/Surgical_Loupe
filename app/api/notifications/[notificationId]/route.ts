@@ -15,7 +15,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ notif
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, message: "Failed to delete notification" }, { status: 500 });
+    return NextResponse.json({ success: false, message: "Failed to update notification" }, { status: 500 });
   }
 }

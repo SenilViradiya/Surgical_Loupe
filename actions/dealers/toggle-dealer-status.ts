@@ -55,14 +55,14 @@ export async function toggleDealerStatus(values: any) {
         deliveryChannels: ["IN_APP", "EMAIL"],
         ctaLabel: "Open dealers",
         ctaUrl: "/admin/dealers",
-      }).catch((error) => console.error(error));
+      });
     }
 
     revalidatePath("/admin/dealers");
 
     return { success: true };
   } catch (error) {
-    console.log(error);
+
     return { success: false };
   }
 }

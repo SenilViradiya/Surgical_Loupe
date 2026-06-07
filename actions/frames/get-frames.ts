@@ -84,7 +84,7 @@ export async function getFrames({
       currentPage: page,
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       frames: [],

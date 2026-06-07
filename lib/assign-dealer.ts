@@ -52,7 +52,7 @@ export async function assignDealer(
 
     return sorted[0].dealer;
   } catch (error) {
-    console.log(error);
+
 
     return null;
   }

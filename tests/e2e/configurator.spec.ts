@@ -1,159 +1,111 @@
 import { expect, test } from "./fixtures";
 
-test.describe(
-  "Configurator page — basic interaction smoke",
-  () => {
-    test(
-      "stepper navigation, fullscreen toggle, and mobile CTA",
-      async ({ page }) => {
-        await page.goto("/configurator");
+test.describe("Configurator page — basic interaction smoke", () => {
+  test("stepper navigation, fullscreen toggle, and mobile CTA", async ({ page }) => {
+    await page.goto("/configurator");
 
-        /*
-         * Basic page loaded
-         */
+    /*
+     * Wait for 3D model readiness
+     */
+    await expect(page.getByTestId("configurator-ready")).toBeVisible({ timeout: 15000 });
 
-        await expect(
-          page.getByRole("heading", {
-            level: 1,
-          })
-        ).toBeVisible();
+    /*
+     * Basic page loaded
+     */
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+      })
+    ).toBeVisible();
 
-        /*
-         * Stepper visible
-         */
+    /*
+     * Stepper visible
+     */
+    const stepper = page.getByRole("navigation", {
+      name: "Configurator steps",
+    });
 
-        const stepper =
-          page.getByRole(
-            "navigation",
-            {
-              name:
-                "Configurator steps",
-            }
-          );
+    await expect(stepper).toBeVisible();
 
-        await expect(
-          stepper
-        ).toBeVisible();
+    /*
+     * Navigate to Lens step
+     */
+    const lensButton = stepper.getByRole("button", {
+      name: /lens/i,
+    });
 
-        /*
-         * Navigate to Lens step
-         */
+    await expect(lensButton).toBeVisible();
+    await lensButton.click();
 
-        const lensButton =
-          stepper.getByRole(
-            "button",
-            {
-              name: /lens/i,
-            }
-          );
+    /*
+     * Verify user reached lens section
+     */
+    await expect(
+      page.getByRole("heading", {
+        name: /Fine-?tune the lens/i,
+      })
+    ).toBeVisible({ timeout: 5000 });
 
-        await expect(
-          lensButton
-        ).toBeVisible();
+    /*
+     * Fullscreen viewer
+     */
+    const fullscreenButton = page.getByRole("button", {
+      name: /enter fullscreen|exit fullscreen/i,
+    });
 
-        await lensButton.click();
+    await expect(fullscreenButton).toBeVisible();
+    await fullscreenButton.click();
 
-        /*
-         * Verify user reached lens section
-         * (more reliable than only checking aria state)
-         */
+    const closeViewerButton = page.getByRole("button", {
+      name: /close viewer/i,
+    });
 
-        await expect(
-          page.getByRole(
-            "heading",
-            {
-              name: /Fine-?tune the lens/i,
-            }
-          )
-        ).toBeVisible({ timeout: 5000 });
+    await expect(closeViewerButton).toBeVisible({
+      timeout: 5000,
+    });
 
-        /*
-         * Fullscreen viewer
-         */
+    /*
+     * Exit fullscreen
+     * Note: We use page.evaluate() here because the combination of animate-viewer-enter 
+     * and backdrop-blur can cause Playwright native clicks to occasionally miss 
+     * the target during the transition frames in slow environments.
+     */
+    await page.evaluate(() => {
+      const btn = Array.from(document.querySelectorAll("button")).find((b) =>
+        /close viewer/i.test(b.textContent || "")
+      ) as HTMLButtonElement | undefined;
+      btn?.click();
+    });
 
-        const fullscreenButton =
-          page.getByRole(
-            "button",
-            {
-              name:
-                /enter fullscreen|exit fullscreen/i,
-            }
-          );
+    // Wait until browser fully exits fullscreen before resizing
+    await page.waitForFunction(() => !document.fullscreenElement);
+    await expect(page.getByTestId("configurator-ready")).toBeVisible();
 
-        await expect(
-          fullscreenButton
-        ).toBeVisible();
+    /*
+     * Mobile viewport
+     */
+    await page.setViewportSize({
+      width: 390,
+      height: 844,
+    });
 
-        await fullscreenButton.click();
+    const requestQuoteButton = page.getByRole("button", {
+      name: /request quote/i,
+    });
 
-        const closeViewerButton =
-          page.getByRole(
-            "button",
-            {
-              name:
-                /close viewer/i,
-            }
-          );
+    await expect(requestQuoteButton).toBeVisible();
 
-        await expect(
-          closeViewerButton
-        ).toBeVisible({
-          timeout: 5000,
-        });
+    /*
+     * Mobile CTA scroll
+     */
+    await requestQuoteButton.click();
 
-        /*
-         * Exit fullscreen
-         */
-
-        await closeViewerButton.click({ force: true });
-
-        // Ensure the document fullscreen is exited before resizing the window
-        await page.evaluate(async () => {
-          if (document.fullscreenElement) {
-            await document.exitFullscreen();
-          }
-        });
-        await page.waitForTimeout(300);
-        /*
-         * Mobile viewport
-         */
-
-        await page.setViewportSize({
-          width: 390,
-          height: 844,
-        });
-
-        const requestQuoteButton =
-          page.getByRole(
-            "button",
-            {
-              name:
-                /request quote/i,
-            }
-          );
-
-        await expect(
-          requestQuoteButton
-        ).toBeVisible();
-
-        /*
-         * Mobile CTA scroll
-         */
-
-        await requestQuoteButton.click();
-
-        await expect(
-          page.getByRole(
-            "heading",
-            {
-              name:
-                /request quote/i,
-            }
-          )
-        ).toBeVisible({
-          timeout: 5000,
-        });
-      }
-    );
-  }
-);
+    await expect(
+      page.getByRole("heading", {
+        name: /request quote/i,
+      })
+    ).toBeVisible({
+      timeout: 5000,
+    });
+  });
+});

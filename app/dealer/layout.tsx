@@ -1,7 +1,5 @@
 import { auth } from "@/auth";
-
 import { redirect } from "next/navigation";
-
 import { UserRole } from "@/lib/generated/prisma";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +15,7 @@ export default async function DealerLayout({
     redirect("/login");
   }
 
-  if (
-    session.user.role !== UserRole.DEALER
-  ) {
+  if (session.user.role !== UserRole.DEALER) {
     redirect("/admin");
   }
 

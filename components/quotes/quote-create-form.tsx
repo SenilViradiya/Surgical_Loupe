@@ -101,7 +101,7 @@ export function QuoteCreateForm({
       toast.success("Quote draft created");
       router.push(`/dealer/quotes?draft=${created.quote.id}`);
     } catch (error) {
-      console.error(error);
+
       toast.error("Something went wrong");
     } finally {
       loadingSetter(false);

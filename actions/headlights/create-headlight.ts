@@ -49,7 +49,7 @@ export async function createHeadlight(
       message: "Headlight created",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

@@ -53,7 +53,7 @@ export async function loginUser(
       message: "Login successful",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

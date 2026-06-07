@@ -175,7 +175,7 @@ export async function getConfiguratorCompatibilityCatalog() {
   try {
     const { getInventorySnapshot } = await import("@/lib/inventory/inventory-service");
     inventorySnapshot = await getInventorySnapshot();
-  } catch (e) {
+  } catch (error: unknown) {
     // inventory module may not be available during early deploys — fail gracefully
     inventorySnapshot = null;
   }
@@ -255,16 +255,15 @@ export async function getCompatibilityOptionsForLens(frameId: string, lensId: st
   });
 }
 
+
 export async function validateConfiguration({
-  frameId,
-  lensId,
-  headlightId,
+  frameId, lensId, headlightId,
 }: {
   frameId: string;
   lensId: string;
   headlightId?: string | null;
-}): Promise<CompatibilityValidationResult> {
-  const [frame, lens, headlight, snapshot] = await Promise.all([
+}, requestId: string): Promise<CompatibilityValidationResult> {
+  const [frame, lens, headlight, rules] = await Promise.all([
     prisma.frame.findUnique({
       where: { id: frameId },
       select: { id: true, status: true },
@@ -279,39 +278,44 @@ export async function validateConfiguration({
           select: { id: true, status: true },
         })
       : Promise.resolve(null),
-    loadSnapshot(),
+    // Target only current frame/lens rules
+    Promise.all([
+      prisma.frameLensCompatibility.findMany({
+        where: { frameId },
+        select: { id: true, frameId: true, lensId: true, reason: true },
+      }),
+      prisma.frameHeadlightCompatibility.findMany({
+        where: { frameId },
+        select: { id: true, frameId: true, headlightId: true, reason: true },
+      }),
+      headlightId
+        ? prisma.lensHeadlightCompatibility.findMany({
+            where: { lensId },
+            select: { id: true, lensId: true, headlightId: true, reason: true },
+          })
+        : Promise.resolve([]),
+    ]).then(([fl, fh, lh]) => ({
+      frameLens: fl.map(i => ({ id: i.id, sourceId: i.frameId, targetId: i.lensId, reason: i.reason })),
+      frameHeadlight: fh.map(i => ({ id: i.id, sourceId: i.frameId, targetId: i.headlightId, reason: i.reason })),
+      lensHeadlight: lh.map(i => ({ id: i.id, sourceId: i.lensId, targetId: i.headlightId, reason: i.reason })),
+    })),
   ]);
 
   if (!frame || frame.status !== "ACTIVE") {
-    return notFoundError(
-      "FRAME_NOT_FOUND",
-      "Selected frame could not be found or is inactive.",
-      "frameId",
-      frameId
-    );
+    return notFoundError("FRAME_NOT_FOUND", "Selected frame could not be found or is inactive.", "frameId", frameId);
   }
 
   if (!lens || lens.status !== "ACTIVE") {
-    return notFoundError(
-      "LENS_NOT_FOUND",
-      "Selected lens could not be found or is inactive.",
-      "lensId",
-      lensId
-    );
+    return notFoundError("LENS_NOT_FOUND", "Selected lens could not be found or is inactive.", "lensId", lensId);
   }
 
   if (headlightId && (!headlight || headlight.status !== "ACTIVE")) {
-    return notFoundError(
-      "HEADLIGHT_NOT_FOUND",
-      "Selected headlight could not be found or is inactive.",
-      "headlightId",
-      headlightId
-    );
+    return notFoundError("HEADLIGHT_NOT_FOUND", "Selected headlight could not be found or is inactive.", "headlightId", headlightId);
   }
 
-  const frameLensRules = snapshot.frameLens.filter((item) => item.sourceId === frameId);
-  const frameHeadlightRules = snapshot.frameHeadlight.filter((item) => item.sourceId === frameId);
-  const lensHeadlightRules = snapshot.lensHeadlight.filter((item) => item.sourceId === lensId);
+  const frameLensRules = rules.frameLens;
+  const frameHeadlightRules = rules.frameHeadlight;
+  const lensHeadlightRules = rules.lensHeadlight;
 
   const frameLensLocked = frameLensRules.length > 0;
   const frameHeadlightLocked = frameHeadlightRules.length > 0;

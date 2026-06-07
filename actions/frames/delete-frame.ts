@@ -20,7 +20,7 @@ export async function deleteFrame(
       message: "Frame deleted",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

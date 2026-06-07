@@ -49,7 +49,7 @@ export async function createLens(
       message: "Lens created",
     };
   } catch (error) {
-    console.log(error);
+
 
     return {
       success: false,

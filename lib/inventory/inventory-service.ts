@@ -91,7 +91,7 @@ async function emitInventoryThresholdNotification(product: { type: "FRAME" | "LE
     deliveryChannels: ["IN_APP", "EMAIL"],
     ctaLabel: "Open inventory",
     ctaUrl: "/admin/inventory",
-  }).catch((error) => console.error(error));
+  });
 }
 
 export async function getInventorySnapshot(): Promise<InventorySnapshot> {
@@ -298,7 +298,7 @@ export async function updateInventory(product: { type: "FRAME" | "LENS" | "HEADL
   return result;
 }
 
-export async function validateInventory({ frameId, lensId, headlightId }: { frameId: string; lensId: string; headlightId?: string | null }) {
+export async function validateInventory({ frameId, lensId, headlightId }: { frameId: string; lensId: string; headlightId?: string | null }, requestId?: string) {
   const [f, l, h] = await Promise.all([
     getFrameAvailability(frameId),
     getLensAvailability(lensId),

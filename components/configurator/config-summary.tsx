@@ -138,7 +138,7 @@ function SaveDraftButton({
             toast.error(json?.message ?? "Failed to save draft");
           }
         } catch (err) {
-          console.error(err);
+
           const { toast } = await import("sonner");
           toast.error("Failed to save draft");
         } finally {
