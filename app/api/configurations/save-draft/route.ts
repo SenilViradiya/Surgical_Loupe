@@ -12,11 +12,12 @@ export async function POST(req: Request) {
     const parsed = configurationSchema.parse(body);
 
     const vStart = Date.now();
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     const compatibility = await validateConfiguration({
       frameId: parsed.frameId,
       lensId: parsed.lensId,
       headlightId: parsed.headlightId ?? null,
-    });
+    }, requestId);
     const vEnd = Date.now();
 
     if (!compatibility.success) {

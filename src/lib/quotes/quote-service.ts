@@ -162,11 +162,12 @@ export async function createQuote(values: CreateQuoteInput) {
     return { success: false, message: "Lead belongs to a different dealer" };
   }
 
+  const requestId = `quote_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   const compatibility = await validateConfiguration({
     frameId: lead.configuration.frameId,
     lensId: lead.configuration.lensId,
     headlightId: lead.configuration.headlightId ?? null,
-  });
+  }, requestId);
 
   if (!compatibility.success) {
     return compatibility;
