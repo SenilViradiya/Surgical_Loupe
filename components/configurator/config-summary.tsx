@@ -18,65 +18,61 @@ export function ConfigSummary() {
     lens,
     headlight,
   } =
-      useConfiguratorStore();
+    useConfiguratorStore();
 
   const total =
     (frame?.price ?? 0) +
     (lens?.price ?? 0) +
     (headlight?.price ?? 0);
 
-  
+
 
   return (
-    <div className="rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur sm:p-6">
-      <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+    <div className="rounded-[2rem] border border-white/10 bg-[#11141A] p-4 shadow-sm backdrop-blur sm:p-6">
+      <p className="text-xs font-bold tracking-[0.3em] text-[#C4A25D] uppercase">
         Configuration summary
       </p>
 
-      <h2 className="mt-2 font-heading text-3xl text-slate-950">
+      <h2 className="mt-2 font-heading text-2xl text-[#F4F1EA]">
         Your selected build
       </h2>
 
-      <div className="mt-5 space-y-3 rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
-        <div className="flex flex-col gap-1 border-b border-slate-200 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <span className="text-sm text-slate-500">Frame</span>
-
-          <span className="text-sm font-medium text-slate-900 sm:text-right">
-            {frame?.name ?? "Select a frame"}
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-1 border-b border-slate-200 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <span className="text-sm text-slate-500">Lens</span>
-
-          <span className="text-sm font-medium text-slate-900 sm:text-right">
-            {lens?.name ?? "Select a lens"}
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <span className="text-sm text-slate-500">Headlight</span>
-
-          <span className="text-sm font-medium text-slate-900 sm:text-right">
-            {headlight?.name ?? "Optional"}
-          </span>
-        </div>
-
-        <div className="mt-2 rounded-2xl bg-white px-4 py-4 shadow-md ring-1 ring-slate-200">
-          <div className="flex items-center justify-between text-xl font-semibold text-slate-950">
-            <span>Total</span>
-
-            <span className="text-2xl">₹{total}</span>
+      <div className="mt-6 space-y-4">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-[#F4F1EA]/50 uppercase tracking-wider">Frame</span>
+            <span className="font-medium text-[#F4F1EA] text-right">
+              {frame?.name ?? "—"}
+            </span>
           </div>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Pricing updates as you refine the configuration.
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-[#F4F1EA]/50 uppercase tracking-wider">Lens</span>
+            <span className="font-medium text-[#F4F1EA] text-right">
+              {lens?.name ?? "—"}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-[#F4F1EA]/50 uppercase tracking-wider">Headlight</span>
+            <span className="font-medium text-[#F4F1EA] text-right">
+              {headlight?.name ?? "Optional"}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-4 border-t border-white/10 pt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold uppercase tracking-wider text-[#F4F1EA]/80">Total</span>
+            <span className="font-display text-2xl text-[#C4A25D]">₹{total}</span>
+          </div>
+          <p className="mt-1 text-[10px] text-[#F4F1EA]/30 uppercase tracking-widest text-right">
+            Excl. Taxes & Shipping
           </p>
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-        {/* Use sonner toast for feedback and disable when required selections missing */}
+      <div className="mt-6">
         <SaveDraftButton frame={frame} lens={lens} headlight={headlight} />
       </div>
     </div>
@@ -103,7 +99,6 @@ function SaveDraftButton({
       disabled={disabled}
       onClick={async () => {
         if (!frame || !lens) {
-          // import toast dynamically to avoid top-level client-only issues
           const { toast } = await import("sonner");
           toast.error("Please select frame and lens before saving a draft");
           return;
@@ -138,17 +133,17 @@ function SaveDraftButton({
             toast.error(json?.message ?? "Failed to save draft");
           }
         } catch (err) {
-
           const { toast } = await import("sonner");
           toast.error("Failed to save draft");
         } finally {
           setSaving(false);
         }
       }}
-      variant="secondary"
-      className="rounded-full px-6 py-3 bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full rounded-full bg-[#C4A25D] py-6 text-sm font-bold text-[#0B0D10] transition-all hover:bg-[#D8BD80] hover:shadow-[0_0_20px_rgba(196,162,93,0.3)] disabled:opacity-30"
     >
       {saving ? "Saving..." : "Save Draft"}
     </Button>
+
+
   );
 }
