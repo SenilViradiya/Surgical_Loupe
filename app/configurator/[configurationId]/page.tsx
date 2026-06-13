@@ -34,20 +34,26 @@ export default async function SavedConfigurationPage({
   }
 
   return (
-    <div className="relative overflow-hidden bg-[linear-gradient(180deg,#f7f8fb_0%,#eef3f5_48%,#f8fafc_100%)]">
-      <div className="container mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+    <div className="bg-[#0B0D10] min-h-screen px-6 py-6 sm:px-12 lg:px-20">
+      <div className="mx-auto max-w-7xl space-y-8 py-6 lg:py-12">
+        <RestoreConfiguration
+          configuration={
+            configuration
+          }
+        />
+
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-4">
+            <p className="text-xs font-bold tracking-[0.3em] text-[#C4A25D] uppercase">
               Saved configuration
             </p>
 
-            <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">
-            Saved Configuration
+            <h1 className="font-display text-4xl text-[#F4F1EA] lg:text-5xl">
+              Saved Configuration
             </h1>
 
-            <p className="text-sm text-slate-600 sm:text-base">
-              Review your saved setup
+            <p className="text-sm text-[#F4F1EA]/70 sm:text-base max-w-xl leading-relaxed">
+              Below is the customized loupe setup you previously drafted. You can share this link or proceed to request a formal quote.
             </p>
           </div>
 
@@ -55,20 +61,16 @@ export default async function SavedConfigurationPage({
             configurationId={
               configuration.id
             }
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10"
           />
         </div>
-
-        <RestoreConfiguration
-          configuration={
-            configuration
-          }
-        />
 
         <ConfiguratorLayout
           aside={<StickySummary><ConfigSummary /></StickySummary>}
         >
-          <ConfiguratorScene initialFrame={configuration.frame} />
+          <div className="rounded-[2rem] border border-white/10 bg-[#11141A] p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.5)]">
+            <ConfiguratorScene initialFrame={configuration.frame} />
+          </div>
         </ConfiguratorLayout>
       </div>
     </div>

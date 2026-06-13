@@ -82,7 +82,7 @@ export function LeadForm() {
         ) {
           toast.error(
             configuration.message ??
-              "Failed to save configuration"
+            "Failed to save configuration"
           );
 
           return;
@@ -143,24 +143,24 @@ export function LeadForm() {
       onSubmit={
         handleSubmit
       }
-      className="space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/88 p-4 shadow-[0_16px_40px_-28px_rgba(15,23,42,0.28)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_22px_54px_-28px_rgba(15,23,42,0.32)] sm:p-6"
+      className="space-y-4 rounded-[2rem] border border-white/10 bg-[#11141A]/88 p-4 shadow-[0_16px_40px_-28px_rgba(0,0,0,0.5)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_22px_54px_-28px_rgba(0,0,0,0.6)] sm:p-6"
     >
-      <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
+      <p className="text-xs font-bold tracking-[0.3em] text-[#C4A25D] uppercase">
         Request quote
       </p>
 
-      <h2 className="font-heading text-2xl text-slate-950">
+      <h2 className="font-heading text-2xl text-[#F4F1EA]">
         Request Quote
       </h2>
 
-      <p className="text-sm leading-6 text-slate-600">
+      <p className="text-sm leading-6 text-[#F4F1EA]/70">
         Leave your details and we will prepare a tailored response based on the exact configuration you built.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
           placeholder="Full Name"
-          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white sm:col-span-2"
+          className="h-11 rounded-xl border-white/10 bg-[#0B0D10] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 transition-all duration-200 hover:bg-[#15181F] focus-visible:bg-[#15181F] focus-visible:ring-1 focus-visible:ring-[#C4A25D] sm:col-span-2"
           value={
             form.fullName
           }
@@ -177,7 +177,7 @@ export function LeadForm() {
         <Input
           placeholder="Email"
           type="email"
-          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white sm:col-span-2"
+          className="h-11 rounded-xl border-white/10 bg-[#0B0D10] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 transition-all duration-200 hover:bg-[#15181F] focus-visible:bg-[#15181F] focus-visible:ring-1 focus-visible:ring-[#C4A25D] sm:col-span-2"
           value={form.email}
           onChange={(e) =>
             setForm({
@@ -191,7 +191,7 @@ export function LeadForm() {
 
         <Input
           placeholder="Phone"
-          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
+          className="h-11 rounded-xl border-white/10 bg-[#0B0D10] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 transition-all duration-200 hover:bg-[#15181F] focus-visible:bg-[#15181F] focus-visible:ring-1 focus-visible:ring-[#C4A25D]"
           value={form.phone}
           onChange={(e) =>
             setForm({
@@ -205,7 +205,7 @@ export function LeadForm() {
 
         <Input
           placeholder="City"
-          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
+          className="h-11 rounded-xl border-white/10 bg-[#0B0D10] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 transition-all duration-200 hover:bg-[#15181F] focus-visible:bg-[#15181F] focus-visible:ring-1 focus-visible:ring-[#C4A25D]"
           value={form.city}
           onChange={(e) =>
             setForm({
@@ -219,7 +219,7 @@ export function LeadForm() {
 
         <Input
           placeholder="State"
-          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
+          className="h-11 rounded-xl border-white/10 bg-[#0B0D10] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 transition-all duration-200 hover:bg-[#15181F] focus-visible:bg-[#15181F] focus-visible:ring-1 focus-visible:ring-[#C4A25D]"
           value={form.state}
           onChange={(e) =>
             setForm({
@@ -233,7 +233,7 @@ export function LeadForm() {
 
         <Input
           placeholder="Pincode"
-          className="h-11 rounded-xl border-slate-200/80 bg-slate-50/85 transition-all duration-200 hover:bg-white focus-visible:bg-white"
+          className="h-11 rounded-xl border-white/10 bg-[#0B0D10] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 transition-all duration-200 hover:bg-[#15181F] focus-visible:bg-[#15181F] focus-visible:ring-1 focus-visible:ring-[#C4A25D]"
           value={form.pincode}
           onChange={(e) =>
             setForm({
@@ -249,12 +249,13 @@ export function LeadForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="h-11 w-full rounded-full bg-slate-950 text-white shadow-[0_12px_28px_-16px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-18px_rgba(15,23,42,0.68)] active:translate-y-0"
+        className="h-11 w-full rounded-full bg-[#C4A25D] text-slate-950 font-bold shadow-[0_12px_28px_-16px_rgba(0,0,0,0.6)] transition-all duration-300 hover:bg-[#D8BD80] hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-18px_rgba(0,0,0,0.68)] active:translate-y-0"
       >
         {loading
           ? "Submitting..."
           : "Generate Quote"}
       </Button>
     </form>
+
   );
 }

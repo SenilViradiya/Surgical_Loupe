@@ -18,7 +18,7 @@ export function FrameSelector({
   frames,
 }: Props) {
   const {
-    frame : selectedFrame,
+    frame: selectedFrame,
     setFrame,
   } =
     useConfiguratorStore();
@@ -29,7 +29,7 @@ export function FrameSelector({
       description="Browse a compact slider of frame options and keep the current selection visible without filling the whole page."
     >
       {frames.length === 0 ? (
-        <div className="w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4 text-sm text-slate-600">
+        <div className="w-full rounded-2xl border border-dashed border-white/20 bg-white/5 p-4 text-sm text-[#F4F1EA]/70">
           No active frame options are available right now.
         </div>
       ) : frames.map((frame) => {
@@ -56,27 +56,28 @@ export function FrameSelector({
                 </div>
               </div>
             ) : (
-              <div className="flex h-24 items-center justify-center bg-[linear-gradient(135deg,rgba(148,163,184,0.18),rgba(255,255,255,0.55))] text-sm text-slate-500 sm:h-28">
+              <div className="flex h-24 items-center justify-center bg-[#0B0D10] text-sm text-[#F4F1EA]/50 sm:h-28 w-full border-b border-white/10">
                 Preview unavailable
               </div>
             )}
 
             <div className="space-y-1.5 p-3 w-full">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-3 text-[#F4F1EA]">
                 <h3 className="text-sm font-semibold leading-5">{frame.name}</h3>
 
                 <span className={cn(
-                  "rounded-full border px-2 py-0.5 text-[10px] font-medium",
-                  isActive ? "border-white/20 bg-white/10 text-white" : "border-slate-200 bg-slate-50 text-slate-500"
+                  "rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                  isActive ? "border-[#C4A25D]/30 bg-[#C4A25D]/10 text-[#C4A25D]" : "border-white/10 bg-white/5 text-[#F4F1EA]/50"
                 )}>
                   {isActive ? "Selected" : "Frame"}
                 </span>
               </div>
 
-              <p className={cn("text-sm", isActive ? "text-slate-200" : "text-slate-600")}>
+              <p className={cn("text-sm font-display", isActive ? "text-[#C4A25D]" : "text-[#F4F1EA]/70")}>
                 ₹{frame.price}
               </p>
             </div>
+
           </ProductOptionCard>
         );
       })}

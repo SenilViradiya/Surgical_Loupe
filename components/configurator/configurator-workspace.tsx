@@ -94,8 +94,8 @@ export function ConfiguratorWorkspace({
 
     const lensHeadlightRules = selectedLens
       ? compatibility.lensHeadlight.filter(
-          (relation) => relation.sourceId === selectedLens.id
-        )
+        (relation) => relation.sourceId === selectedLens.id
+      )
       : [];
 
     const headlightInvalidByLens =
@@ -195,19 +195,19 @@ export function ConfiguratorWorkspace({
     >
       <div className="space-y-6 sm:space-y-8">
         <div className="space-y-4 animate-[fadeInUp_600ms_ease-out]">
-          <p className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/80 px-4 py-1 text-xs font-medium tracking-[0.24em] text-slate-600 uppercase shadow-sm backdrop-blur">
+          <p className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-1 text-xs font-medium tracking-[0.24em] text-[#C4A25D] uppercase shadow-sm backdrop-blur">
             Precision configurator
           </p>
 
-          <h1 className="max-w-3xl font-display text-4xl leading-tight text-slate-950 md:text-5xl lg:text-6xl">
+          <h1 className="max-w-3xl font-display text-4xl leading-tight text-[#F4F1EA] md:text-5xl lg:text-6xl">
             Build a loupe setup that feels calibrated for the clinic, not just configured on a screen.
           </h1>
 
-          <p className="max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
+          <p className="max-w-2xl text-base leading-7 text-[#F4F1EA]/70 md:text-lg">
             Compare frame, lens, and headlight combinations in one flow. The preview updates as you select each part, while the page gives your customer a clear explanation of what they are choosing and why it matters.
           </p>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
               {
                 label: "Precision fit",
@@ -215,7 +215,7 @@ export function ConfiguratorWorkspace({
               },
               {
                 label: "Guided selection",
-                value: "Every option is presented with context, pricing, and preview",
+                value: "Every option is presented with context and preview",
               },
               {
                 label: "Fast quote flow",
@@ -224,24 +224,24 @@ export function ConfiguratorWorkspace({
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm backdrop-blur"
+                className="rounded-2xl border border-white/10 bg-[#11141A] p-4 shadow-sm backdrop-blur"
               >
-                <p className="text-sm font-semibold text-slate-900">{item.label}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.value}</p>
+                <p className="text-sm font-semibold text-[#F4F1EA]">{item.label}</p>
+                <p className="mt-2 text-xs leading-5 text-[#F4F1EA]/60">{item.value}</p>
               </div>
             ))}
           </div>
         </div>
 
         <section id="preview" className="space-y-4 scroll-mt-28 animate-[fadeInUp_700ms_ease-out]">
-          <div className="relative rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_32px_80px_-34px_rgba(15,23,42,0.4)] sm:p-5">
+          <div className="relative rounded-[2rem] border border-white/10 bg-[#0B0D10] p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.5)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_32px_80px_-34px_rgba(0,0,0,0.6)] sm:p-5">
             <div className="mb-4 flex flex-col gap-4 px-1 pt-1 sm:flex-row sm:items-center sm:justify-between sm:px-2">
               <div>
-                <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Live preview</p>
-                <h2 className="mt-2 font-heading text-2xl text-slate-950">Main configuration</h2>
+                <p className="text-xs font-semibold tracking-[0.3em] text-[#C4A25D] uppercase">Live preview</p>
+                <h2 className="mt-2 font-heading text-2xl text-[#F4F1EA]">Main configuration</h2>
               </div>
 
-              <div className="self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+              <div className="self-start rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-[#C4A25D] uppercase tracking-wider font-bold">
                 3D canvas
               </div>
             </div>
@@ -259,13 +259,14 @@ export function ConfiguratorWorkspace({
           }}
           data-step-id="frame"
           className={
-            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
+            "mt-12 scroll-mt-32 rounded-[2rem] border border-white/10 bg-[#11141A] p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
             (revealedSteps.frame ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
           }
         >
-          <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 1</p>
+
+          <p className="text-xs font-semibold tracking-[0.3em] text-[#C4A25D] uppercase">Step 1</p>
           <div className="mt-4">
-              <FrameSelector frames={frames} />
+            <FrameSelector frames={frames} />
           </div>
         </section>
 
@@ -276,12 +277,12 @@ export function ConfiguratorWorkspace({
           }}
           data-step-id="lens"
           className={
-            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
+            "scroll-mt-32 rounded-[2rem] border border-white/10 bg-[#11141A] p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
             (revealedSteps.lens ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
           }
         >
-          <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 2</p>
-            <div className="mt-4">
+          <p className="text-xs font-semibold tracking-[0.3em] text-[#C4A25D] uppercase">Step 2</p>
+          <div className="mt-4">
             <LensSelector lenses={lenses} compatibility={compatibility} inventory={inventory} />
           </div>
         </section>
@@ -293,12 +294,12 @@ export function ConfiguratorWorkspace({
           }}
           data-step-id="headlight"
           className={
-            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
+            "scroll-mt-32 rounded-[2rem] border border-white/10 bg-[#11141A] p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-5 " +
             (revealedSteps.headlight ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
           }
         >
-          <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 3</p>
-            <div className="mt-4">
+          <p className="text-xs font-semibold tracking-[0.3em] text-[#C4A25D] uppercase">Step 3</p>
+          <div className="mt-4">
             <HeadlightSelector headlights={headlights} compatibility={compatibility} inventory={inventory} />
           </div>
         </section>
@@ -310,14 +311,14 @@ export function ConfiguratorWorkspace({
           }}
           data-step-id="review"
           className={
-            "scroll-mt-32 rounded-[2rem] border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-6 " +
+            "scroll-mt-32 rounded-[2rem] border border-white/10 bg-[#11141A] p-4 shadow-sm backdrop-blur transition-all duration-500 sm:p-6 " +
             (revealedSteps.review ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")
           }
         >
-          <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">Step 4</p>
-          <h2 className="mt-2 font-heading text-2xl text-slate-950">Review configuration</h2>
+          <p className="text-xs font-semibold tracking-[0.3em] text-[#C4A25D] uppercase">Step 4</p>
+          <h2 className="mt-2 font-heading text-2xl text-[#F4F1EA]">Review configuration</h2>
 
-          <div className="mt-4 space-y-4 text-sm leading-6 text-slate-600">
+          <div className="mt-4 space-y-4 text-sm leading-6 text-[#F4F1EA]/70">
             <p>
               Share your contact details and our team can review the selected configuration, confirm compatibility, and prepare the next recommendation.
             </p>
@@ -327,6 +328,7 @@ export function ConfiguratorWorkspace({
             </p>
           </div>
         </section>
+
 
         <section
           id="quote"

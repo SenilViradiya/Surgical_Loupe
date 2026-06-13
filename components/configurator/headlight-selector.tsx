@@ -89,7 +89,7 @@ export function HeadlightSelector({
       description="Scroll through compact lighting options and keep the page balanced while you compare the best fit."
     >
       {headlights.length === 0 ? (
-        <div className="w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4 text-sm text-slate-600">
+        <div className="w-full rounded-2xl border border-dashed border-white/20 bg-white/5 p-4 text-sm text-[#F4F1EA]/70">
           No active headlight options are available right now.
         </div>
       ) : headlights.map((headlight) => {
@@ -119,27 +119,28 @@ export function HeadlightSelector({
                 </div>
               </div>
             ) : (
-              <div className="flex h-24 items-center justify-center bg-[linear-gradient(135deg,rgba(148,163,184,0.18),rgba(255,255,255,0.55))] text-sm text-slate-500 sm:h-28">
+              <div className="flex h-24 items-center justify-center bg-[#0B0D10] text-sm text-[#F4F1EA]/50 sm:h-28 w-full border-b border-white/10">
                 Preview unavailable
               </div>
             )}
 
-            <div className="space-y-1 p-3 w-full">
-              <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1 p-3 w-full border-t border-white/5 mt-auto">
+              <div className="flex items-start justify-between gap-3 text-[#F4F1EA]">
                 <h3 className="text-sm font-semibold leading-5">{headlight.name}</h3>
 
                 <span className={cn(
-                  "rounded-full border px-2 py-0.5 text-[10px] font-medium",
-                  isActive ? "border-white/20 bg-white/10 text-white" : "border-slate-200 bg-slate-50 text-slate-500"
+                  "rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                  isActive ? "border-[#C4A25D]/30 bg-[#C4A25D]/10 text-[#C4A25D]" : "border-white/10 bg-white/5 text-[#F4F1EA]/50"
                 )}>
                   {isActive ? "Selected" : "Light"}
                 </span>
               </div>
 
-              <p className={cn("text-sm font-medium", isActive ? "text-white" : "text-slate-900")}>
+              <p className={cn("text-sm font-display", isActive ? "text-[#C4A25D]" : "text-[#F4F1EA]/70")}>
                 ₹{headlight.price}
               </p>
             </div>
+
           </ProductOptionCard>
         );
       })}

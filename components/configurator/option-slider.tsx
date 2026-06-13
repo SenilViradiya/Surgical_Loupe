@@ -80,9 +80,10 @@ export function OptionSlider({
     <div className={cn("space-y-4", className)}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <h3 className="font-heading text-lg text-slate-950">{title}</h3>
-          <p className="max-w-2xl text-sm leading-6 text-slate-600">{description}</p>
+          <h3 className="font-heading text-lg text-[#F4F1EA]">{title}</h3>
+          <p className="max-w-2xl text-sm leading-6 text-[#F4F1EA]/70">{description}</p>
         </div>
+
 
         <div className="flex items-center gap-2 self-start">
           <Button
@@ -111,8 +112,9 @@ export function OptionSlider({
 
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300/80 px-2"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 px-2"
         onScroll={updateScrollState}
+
         // Improve mobile touch behavior: enable native momentum scrolling and prioritize horizontal pan
         style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}
       >
